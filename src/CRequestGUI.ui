@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CRequestGUI</class>
+ <widget class="QWidget" name="CRequestGUI">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>798</width>
+    <height>444</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QGroupBox" name="RequestGB">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Request</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QComboBox" name="RequestType">
+            <property name="toolTip">
+             <string>Request type</string>
+            </property>
+            <property name="currentText">
+             <string notr="true">GET</string>
+            </property>
+            <item>
+             <property name="text">
+              <string>GET</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PUT</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>POST</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>DELETE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>HEAD</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PATCH</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>OPTIONS</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TRACE</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>CONNECT</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LIST</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLineEdit" name="RequestURL">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Request URL</string>
+            </property>
+            <property name="placeholderText">
+             <string>&lt;Put request here&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Run">
+            <property name="toolTip">
+             <string>Execute request</string>
+            </property>
+            <property name="text">
+             <string>Run</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Bootsmann.qrc">
+              <normaloff>:/Icons/Run</normaloff>:/Icons/Run</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTabWidget" name="RequestTabs">
+         <property name="currentIndex">
+          <number>3</number>
+         </property>
+         <widget class="QWidget" name="RequestBodyTab">
+          <attribute name="title">
+           <string>Body</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
+             <item>
+              <widget class="QComboBox" name="RequestDataType">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Plain</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>HTML</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>JSON</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Binary</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_4">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="LoadRequestBody">
+               <property name="text">
+                <string>Load...</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ResetRequestBody">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="RequestBinaryLabel">
+             <property name="text">
+              <string>&lt;...&gt;</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="RequestBody">
+             <property name="readOnly">
+              <bool>false</bool>
+             </property>
+             <property name="placeholderText">
+              <string>&lt;Put request body here&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="RequestParamsTab">
+          <attribute name="title">
+           <string>Parameters</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="CParamTable" name="RequestParams">
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>200</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <item>
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="AddParameter">
+               <property name="text">
+                <string>Add</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Add</normaloff>:/Icons/Add</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="RemoveParameter">
+               <property name="text">
+                <string>Remove</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ClearParameters">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="RequestHeadersTab">
+          <attribute name="title">
+           <string>Headers</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <widget class="CParamTable" name="RequestHeaders">
+             <property name="editTriggers">
+              <set>QAbstractItemView::AllEditTriggers</set>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>200</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="AddHeader">
+               <property name="text">
+                <string>Add</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Add</normaloff>:/Icons/Add</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="RemoveHeader">
+               <property name="text">
+                <string>Remove</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="ClearHeaders">
+               <property name="text">
+                <string>Reset</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="AuthTab">
+          <attribute name="title">
+           <string>Authentification</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_9">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Type</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="AuthType">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <item>
+                <property name="text">
+                 <string>None</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Open</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QStackedWidget" name="AuthStack">
+             <property name="currentIndex">
+              <number>1</number>
+             </property>
+             <widget class="QWidget" name="NoAuth"/>
+             <widget class="QWidget" name="LoginPassAuth">
+              <layout class="QFormLayout" name="formLayout">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Login</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="AuthUser"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Password</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="AuthPassword"/>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QGroupBox" name="OutputGB">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Responce</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="ResultCode">
+              <property name="toolTip">
+               <string>Request execution status</string>
+              </property>
+              <property name="text">
+               <string>[Not executed yet]</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="ResponseSizeLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Response size (in bytes)</string>
+              </property>
+              <property name="text">
+               <string>0 B</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeType">
+               <enum>QSizePolicy::Fixed</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLabel" name="TimeLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>Request execution time (in milliseconds)</string>
+              </property>
+              <property name="text">
+               <string>0 ms</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTabWidget" name="ResultTabs">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="ResponceTab">
+          <attribute name="title">
+           <string>Content</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <widget class="QComboBox" name="ReplyDataType">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Plain</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>HTML</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>JSON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Image</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Binary</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="ReplyDataInfo">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>&lt;...&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QStackedWidget" name="ReplyStack">
+               <property name="currentIndex">
+                <number>2</number>
+               </property>
+               <widget class="QWidget" name="BrowserPage">
+                <layout class="QVBoxLayout" name="verticalLayout_11">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QTextBrowser" name="ResponsePreview">
+                   <property name="toolTip">
+                    <string>Decoded responce</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="LabelPage">
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="ResponceLabel">
+                   <property name="text">
+                    <string>&lt;...&gt;</string>
+                   </property>
+                   <property name="scaledContents">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="TextPage">
+                <layout class="QVBoxLayout" name="verticalLayout_13">
+                 <property name="leftMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPlainTextEdit" name="ResponseText">
+                   <property name="toolTip">
+                    <string>Data received (raw)</string>
+                   </property>
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="HeadersTab">
+          <attribute name="title">
+           <string>Headers</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <item>
+            <widget class="QTableWidget" name="ResponseHeaders">
+             <property name="toolTip">
+              <string>Headers received</string>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropOverwriteMode">
+              <bool>false</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+             <property name="columnCount">
+              <number>2</number>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>200</number>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <column/>
+             <column/>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="ServerErrorText">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>&lt;...&gt;</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CParamTable</class>
+   <extends>QTableWidget</extends>
+   <header location="global">CParamTable.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>RequestType</tabstop>
+  <tabstop>RequestURL</tabstop>
+  <tabstop>Run</tabstop>
+  <tabstop>RequestTabs</tabstop>
+  <tabstop>RequestHeaders</tabstop>
+  <tabstop>AddHeader</tabstop>
+  <tabstop>RemoveHeader</tabstop>
+  <tabstop>ClearHeaders</tabstop>
+  <tabstop>ResponseHeaders</tabstop>
+  <tabstop>RequestBody</tabstop>
+ </tabstops>
+ <resources>
+  <include location="Bootsmann.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>RequestURL</sender>
+   <signal>returnPressed()</signal>
+   <receiver>Run</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>330</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>411</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

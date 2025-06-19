@@ -1,0 +1,19 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/win32/msvc2022/.vs/bootsmann
+/win32/msvc2022/debug
+/win32/msvc2022/release
+/win32/msvc2022/.qmake.stash
+/win32/msvc2022/bootsmann.sln
+/win32/msvc2022/bootsmann.vcxproj
+/win32/msvc2022/bootsmann.vcxproj.filters
+/win32/msvc2022/bootsmann.vcxproj.user
+/win32/msvc2022/ui_CMainGUI.h
+/win32/msvc2022/ui_CRequestGUI.h
+/win32/msvc2022/ui_CWorkspaceGUI.h
+/win32/msvc2022/bootsmann_resource.rc
+/src/*.user
+*.aps
