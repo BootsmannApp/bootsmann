@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QStandardPaths>
 
 
 CMainGUI::CMainGUI(QWidget *parent)
@@ -42,18 +43,29 @@ CMainGUI::CMainGUI(QWidget *parent)
 	qApp->setApplicationDisplayName(qApp->applicationName() + " " + qApp->applicationVersion());
     setWindowTitle(tr("Default Workspace"));
 
-    // add defautl request manager
+    connect(qApp, &QApplication::aboutToQuit, this, &CMainGUI::OnQuitApplication);
+
+    // add default request manager
     auto reqMgr = new CRequestManager(this);
 
     // add default workspace
     m_activeWorkspace = new CWorkspaceGUI(*reqMgr, this);
 	setCentralWidget(m_activeWorkspace);
+
+    // restore settings
+    RestoreSession();
 }
 
 
 CMainGUI::~CMainGUI()
 {
     delete ui;
+}
+
+
+void CMainGUI::OnQuitApplication()
+{
+    StoreSession();
 }
 
 
@@ -130,3 +142,52 @@ void CMainGUI::on_actionLoadRequest_triggered()
 {
     m_activeWorkspace->LoadRequest();
 }
+
+
+// IO Session stuff
+
+QString CMainGUI::GetConfigFileName() const
+{
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/session.ini";
+}
+
+
+void CMainGUI::StoreSession()
+{
+    QString fileName = GetConfigFileName();
+	QSettings settings(fileName, QSettings::IniFormat);
+
+    // current workspace
+    m_activeWorkspace->Store(settings);
+
+	// geometry and state
+    settings.beginGroup("Session");
+    settings.setValue("Geometry", saveGeometry());
+	settings.setValue("State", saveState());
+    settings.endGroup();
+
+    // store other settings if needed
+    // ...
+    
+	settings.sync();
+}
+
+
+void CMainGUI::RestoreSession()
+{
+    QString fileName = GetConfigFileName();
+    QSettings settings(fileName, QSettings::IniFormat);
+
+	// restore geometry and state
+    settings.beginGroup("Session");
+    restoreGeometry(settings.value("Geometry").toByteArray());
+    restoreState(settings.value("State").toByteArray());
+    settings.endGroup();
+
+    // restore current workspace
+    m_activeWorkspace->Restore(settings);
+    
+    // restore other settings if needed
+	// ...
+}
+

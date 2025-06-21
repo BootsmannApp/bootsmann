@@ -30,9 +30,17 @@ public Q_SLOTS:
 	void on_actionSaveRequest_triggered();
 	void on_actionLoadRequest_triggered();
 
+private Q_SLOTS:
+	void OnQuitApplication();
+
 private:
-    Ui::CMainGUI *ui;
-	CWorkspaceGUI* m_activeWorkspace;
+	QString GetConfigFileName() const;
+	void StoreSession();
+	void RestoreSession();
+
+private:
+    Ui::CMainGUI *ui = nullptr;
+	CWorkspaceGUI* m_activeWorkspace = nullptr;
 };
 
 #endif // CMAINGUI_H

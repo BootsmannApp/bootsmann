@@ -50,6 +50,7 @@ private Q_SLOTS:
 	void on_ClearParameters_clicked();
 
     void on_RequestURL_editingFinished();
+    void on_RequestType_currentIndexChanged(int index);
 	void on_RequestParams_cellChanged(int row, int column);
 	void on_RequestDataType_currentIndexChanged(int index);
 	void on_LoadRequestBody_clicked();
@@ -74,6 +75,7 @@ private:
 	void ClearResult();
 
     void RebuildURL();
+    void UpdateTabTitle();
 
 	void DecodeReply(QNetworkReply* reply, const QByteArray& data);
 

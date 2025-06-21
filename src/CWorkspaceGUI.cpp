@@ -18,6 +18,8 @@ CWorkspaceGUI::CWorkspaceGUI(CRequestManager& reqMgr, QWidget *parent)
 {
     ui->setupUi(this);
 
+	ui->Tabs->setMovable(true);
+
     // INFO and LOG non-closable
     ui->Tabs->tabBar()->tabButton(INFO_TAB_INDEX, QTabBar::RightSide)->hide();
     ui->Tabs->tabBar()->tabButton(LOG_TAB_INDEX, QTabBar::RightSide)->hide();
@@ -61,17 +63,27 @@ bool CWorkspaceGUI::Store(QSettings& settings) const
 	settings.setValue("CurrentTabIndex", ui->Tabs->currentIndex());
 
 	// save the number of tabs
-	int tabCount = ui->Tabs->count();
-	settings.setValue("TabCount", tabCount);
+	int tabCount = ui->Tabs->count();       
 
-    for (int i = 0; i < tabCount; ++i) {
+    // exclude INFO and LOG tabs
+	int cnt = 0;
+    for (int i = 2; i < tabCount; ++i) {
         auto requestUI = dynamic_cast<CRequestGUI*>(ui->Tabs->widget(i));
         if (requestUI) {
-            settings.beginGroup(QString("Tab%1").arg(i));
+            if (requestUI->IsDefault()) {
+                // skip default request
+                continue;
+			}
+
+            settings.beginGroup(QString("Tab%1").arg(++cnt));
             requestUI->Store(settings);
+			settings.setValue("TabTitle", ui->Tabs->tabText(i));
+			settings.setValue("TabToolTip", ui->Tabs->tabToolTip(i));
             settings.endGroup();
         }
 	}
+
+    settings.setValue("TabCount", cnt);
 
 	// finish saving
     settings.endGroup();
@@ -86,11 +98,15 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
     // restore the number of tabs
     int tabCount = settings.value("TabCount", 0).toInt();
     for (int i = 0; i < tabCount; ++i) {
-        settings.beginGroup(QString("Tab%1").arg(i));
-        auto requestUI = new CRequestGUI(m_reqMgr, this);
+        settings.beginGroup(QString("Tab%1").arg(i + 1));
+
+        int index = AddRequestTab();
+		auto requestUI = GetRequest(index);
         if (requestUI->Restore(settings)) {
-            int index = ui->Tabs->addTab(requestUI, tr("Request %1").arg(i + 1));
-            //ui->Tabs->setTabToolTip(index, requestUI->GetTitle());
+			// set tab title and tooltip
+			QString tabTitle = settings.value("TabTitle", tr("Request %1").arg(i + 1)).toString();
+			QString tabToolTip = settings.value("TabToolTip", tabTitle).toString();
+            ui->Tabs->setTabToolTip(index, tabToolTip);
             requestUI->Init();
         } else {
             //delete requestUI;
@@ -99,7 +115,7 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
     }
 
     // restore the current tab index
-    int currentTabIndex = settings.value("CurrentTabIndex", 0).toInt();
+    int currentTabIndex = settings.value("CurrentTabIndex", -1).toInt();
     ui->Tabs->setCurrentIndex(currentTabIndex);
 
     settings.endGroup();
@@ -150,6 +166,15 @@ bool CWorkspaceGUI::LoadRequest()
 CRequestGUI* CWorkspaceGUI::GetCurrentRequest()
 {
     return dynamic_cast<CRequestGUI*>(ui->Tabs->currentWidget());
+}
+
+
+CRequestGUI* CWorkspaceGUI::GetRequest(int tabIndex)
+{
+    if (tabIndex < 0 || tabIndex >= ui->Tabs->count())
+        return nullptr;
+
+    return dynamic_cast<CRequestGUI*>(ui->Tabs->widget(tabIndex));
 }
 
 
