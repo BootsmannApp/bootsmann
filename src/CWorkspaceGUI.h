@@ -23,6 +23,7 @@ public:
 	bool SaveCurrentRequest();
 	bool LoadRequest();
 	CRequestGUI* GetCurrentRequest();
+    CRequestGUI* GetRequest(int tabIndex);
 
     bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);

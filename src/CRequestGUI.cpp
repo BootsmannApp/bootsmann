@@ -96,6 +96,9 @@ bool CRequestGUI::Restore(QSettings& settings)
     ui->RequestType->blockSignals(true);
     ui->RequestHeaders->blockSignals(true);
     ui->RequestParams->blockSignals(true);
+    //ui->AuthType->blockSignals(true);
+    ui->AuthPassword->blockSignals(true);
+    ui->AuthUser->blockSignals(true);
 
     // Request
     settings.beginGroup("Request");
@@ -123,9 +126,9 @@ bool CRequestGUI::Restore(QSettings& settings)
     // Autentication settings
     settings.beginGroup("Authentication");
 	int authType = settings.value("AuthType", 0).toInt();
-	ui->AuthType->setCurrentIndex(authType);
 	ui->AuthUser->setText(settings.value("AuthUser", "").toString().trimmed());
 	ui->AuthPassword->setText(settings.value("AuthPassword", "").toString().trimmed());
+    ui->AuthType->setCurrentIndex(authType);
     settings.endGroup();
 
     // UI
@@ -139,9 +142,12 @@ bool CRequestGUI::Restore(QSettings& settings)
     ui->RequestHeaders->blockSignals(false);
     ui->RequestParams->blockSignals(false);
 
-    // request title
-    QString requestTitle = verb + " " + requestUrlStr;
-    Q_EMIT RequestTitleChanged(requestTitle);
+    //ui->AuthType->blockSignals(false);
+    ui->AuthPassword->blockSignals(false);
+    ui->AuthUser->blockSignals(false);
+
+    // title
+    UpdateTabTitle();
 
     return true;
 }
@@ -250,14 +256,10 @@ void CRequestGUI::on_ClearParameters_clicked()
 
 void CRequestGUI::on_RequestURL_editingFinished()
 {
-    QString verb = ui->RequestType->currentText();
-	QString request = ui->RequestURL->text().trimmed();
-    
-    // request title
-    QString requestTitle = verb + " " + request;
-    Q_EMIT RequestTitleChanged(requestTitle);
-    
+	UpdateTabTitle();
+        
     // parse URL and update request parameters
+    QString request = ui->RequestURL->text().trimmed();
     QUrl sourceUrl(request);
 
 	// check authentication type
@@ -305,6 +307,12 @@ void CRequestGUI::on_RequestURL_editingFinished()
 
     ui->RequestParams->setUpdatesEnabled(true);
     ui->RequestParams->blockSignals(false);
+}
+
+
+void CRequestGUI::on_RequestType_currentIndexChanged(int /*index*/)
+{
+    UpdateTabTitle();
 }
 
 
@@ -495,6 +503,17 @@ void CRequestGUI::RebuildURL()
 	ui->RequestURL->setText(targetUrl.toString(QUrl::PrettyDecoded));
 
 	ui->RequestURL->blockSignals(false); // Unblock signals
+
+    // request title
+    UpdateTabTitle();
+}
+
+
+void CRequestGUI::UpdateTabTitle()
+{
+    QString verb = ui->RequestType->currentText();
+    QString requestTitle = verb + " " + ui->RequestURL->text().trimmed();
+    Q_EMIT RequestTitleChanged(requestTitle);
 }
 
 
