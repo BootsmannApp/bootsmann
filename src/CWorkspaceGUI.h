@@ -22,14 +22,18 @@ public:
 	int CreateNewRequest() { return AddRequestTab(); }
 	bool SaveCurrentRequest();
 	bool LoadRequest();
-	CRequestGUI* GetCurrentRequest();
-    CRequestGUI* GetRequest(int tabIndex);
+	bool HasRequests() const; 
+
+	bool SaveWorkspace();
+	bool LoadWorkspace();
 
     bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
 
 protected:
     int AddRequestTab();
+    CRequestGUI* GetCurrentRequest();
+    CRequestGUI* GetRequest(int tabIndex);
 
 private Q_SLOTS:
     void CloseRequestTab(int index);
@@ -38,6 +42,9 @@ private:
     Ui::CWorkspaceGUI *ui;
 
     CRequestManager& m_reqMgr;
+
+	QString m_lastLoadPath;
+	QString m_lastSavePath;
 };
 
 #endif // CWORKSPACEGUI_H

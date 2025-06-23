@@ -691,6 +691,11 @@ void CRequestGUI::DecodeReply(QNetworkReply* reply, const QByteArray& data)
     // Check the content type of the reply  
     auto contentType = reply->header(QNetworkRequest::ContentTypeHeader).toString();
 
+    if (contentType.isEmpty() && data.isEmpty()) {
+        ShowReplyContent(DT_PLAIN, data, contentType);
+        return;
+    }
+
     // images
     if (contentType.contains("image/", Qt::CaseInsensitive)) {
         bool ok = ShowReplyContent(DT_IMAGE, data, contentType);
