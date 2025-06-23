@@ -2,7 +2,6 @@
 #include "ui_CMainGUI.h"
 
 #include "CWorkspaceGUI.h"
-#include "CRequestManager.h"
 
 #include <QVBoxLayout>
 #include <QDesktopServices>
@@ -46,14 +45,11 @@ CMainGUI::CMainGUI(QWidget *parent)
     connect(qApp, &QApplication::aboutToQuit, this, &CMainGUI::OnQuitApplication);
 
     // add default request manager
-    auto reqMgr = new CRequestManager(this);
+    // auto reqMgr = new CRequestManager(this);
 
     // add default workspace
-    m_activeWorkspace = new CWorkspaceGUI(*reqMgr, this);
+    m_activeWorkspace = new CWorkspaceGUI(m_reqMgr, this);
 	setCentralWidget(m_activeWorkspace);
-
-    // restore settings
-    RestoreSession();
 }
 
 
@@ -144,6 +140,37 @@ void CMainGUI::on_actionLoadRequest_triggered()
 }
 
 
+void CMainGUI::on_actionSaveWorkspace_triggered()
+{
+	m_activeWorkspace->SaveWorkspace();
+}
+
+
+void CMainGUI::on_actionLoadWorkspace_triggered()
+{
+	m_activeWorkspace->LoadWorkspace();
+}
+
+
+void CMainGUI::on_actionCloseWorkspace_triggered()
+{
+    if (m_activeWorkspace) {
+        if (m_activeWorkspace->HasRequests()) {
+            QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Close Workspace"),
+                tr("Are you sure you want to close the current workspace? Any unsaved changes will be lost."),
+                QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+            if (reply != QMessageBox::Yes) {
+                return; // user chose not to close
+            }
+		}
+	}
+
+    // create a new default workspace
+    m_activeWorkspace = new CWorkspaceGUI(m_reqMgr, this);
+    setCentralWidget(m_activeWorkspace);
+}
+
+
 // IO Session stuff
 
 QString CMainGUI::GetConfigFileName() const
@@ -161,9 +188,10 @@ void CMainGUI::StoreSession()
     m_activeWorkspace->Store(settings);
 
 	// geometry and state
-    settings.beginGroup("Session");
+    settings.beginGroup("Window");
     settings.setValue("Geometry", saveGeometry());
 	settings.setValue("State", saveState());
+	settings.setValue("Maximized", isMaximized());
     settings.endGroup();
 
     // store other settings if needed
@@ -179,9 +207,10 @@ void CMainGUI::RestoreSession()
     QSettings settings(fileName, QSettings::IniFormat);
 
 	// restore geometry and state
-    settings.beginGroup("Session");
+    settings.beginGroup("Window");
     restoreGeometry(settings.value("Geometry").toByteArray());
     restoreState(settings.value("State").toByteArray());
+	bool maximized = settings.value("Maximized", true).toBool();
     settings.endGroup();
 
     // restore current workspace
@@ -189,5 +218,11 @@ void CMainGUI::RestoreSession()
     
     // restore other settings if needed
 	// ...
+
+    if (maximized) {
+        showMaximized();
+    } else {
+        showNormal();
+	}
 }
 

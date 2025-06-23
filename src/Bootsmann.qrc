@@ -7,6 +7,7 @@
     <file alias="Donate">./Icons/Donate.png</file>
 	  
     <file alias="Add">./Icons/Add.png</file>
+    <file alias="Remove">./Icons/Remove.png</file>
     <file alias="Run">./Icons/Run.png</file>
   </qresource>
 </RCC>

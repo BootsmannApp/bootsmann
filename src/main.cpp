@@ -9,7 +9,9 @@ int main(int argc, char *argv[])
 
     CMainGUI w;
     w.resize(1024,768);
-    w.showMaximized();
+
+    // restore settings
+    w.RestoreSession();
 
     return a.exec();
 }

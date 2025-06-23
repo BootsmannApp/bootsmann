@@ -58,6 +58,10 @@ CWorkspaceGUI::~CWorkspaceGUI()
 bool CWorkspaceGUI::Store(QSettings& settings) const
 {
     settings.beginGroup("Workspace");
+
+	// save the last used paths
+	settings.setValue("LastLoadPath", m_lastLoadPath);
+	settings.setValue("LastSavePath", m_lastSavePath);
     
 	// save the current tab index
 	settings.setValue("CurrentTabIndex", ui->Tabs->currentIndex());
@@ -93,7 +97,16 @@ bool CWorkspaceGUI::Store(QSettings& settings) const
 
 bool CWorkspaceGUI::Restore(QSettings& settings)
 {
+	// clear existing tabs
+    while (ui->Tabs->count() > 2) { // keep INFO and LOG tabs
+        CloseRequestTab(2);
+	}
+
     settings.beginGroup("Workspace");
+
+	// restore the last used paths
+	m_lastLoadPath = settings.value("LastLoadPath", m_lastLoadPath).toString();
+	m_lastSavePath = settings.value("LastSavePath", m_lastSavePath).toString();
 
     // restore the number of tabs
     int tabCount = settings.value("TabCount", 0).toInt();
@@ -119,6 +132,12 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
     ui->Tabs->setCurrentIndex(currentTabIndex);
 
     settings.endGroup();
+
+    if (ui->Tabs->count() ==2) {
+        // if no request tabs, add a default one
+        AddRequestTab();
+	}
+
 	return true;
 }
 
@@ -133,9 +152,11 @@ bool CWorkspaceGUI::SaveCurrentRequest()
     if (!requestUI)
 		return false;
 
-	QString savePath = QFileDialog::getSaveFileName(this, tr("Save Request"), QString(), tr("Bootsmann Requests (*.bor);;All Files (*)"));
+	QString savePath = QFileDialog::getSaveFileName(this, tr("Save Request"), m_lastSavePath, tr("Bootsmann Requests (*.bor);;All Files (*)"));
 	if (savePath.isEmpty())
 		return false;
+
+	m_lastSavePath = QFileInfo(savePath).absolutePath();
 
 	QSettings settings(savePath, QSettings::IniFormat);
 	return requestUI->Store(settings);
@@ -144,9 +165,11 @@ bool CWorkspaceGUI::SaveCurrentRequest()
 
 bool CWorkspaceGUI::LoadRequest()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Request"), "", tr("Bootsmann Requests (*.bor);;All Files (*)"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Request"), m_lastLoadPath, tr("Bootsmann Requests (*.bor);;All Files (*)"));
     if (filePath.isEmpty())
         return false;
+
+	m_lastLoadPath = QFileInfo(filePath).absolutePath();
 
     auto requestUI = GetCurrentRequest();
     if (!requestUI || !requestUI->IsDefault()) {
@@ -160,6 +183,39 @@ bool CWorkspaceGUI::LoadRequest()
 
     QSettings settings(filePath, QSettings::IniFormat);
     return requestUI->Restore(settings);
+}
+
+
+bool CWorkspaceGUI::HasRequests() const 
+{
+    // INFO and LOG tabs are always present
+    return ui->Tabs->count() > 2; 
+}
+
+
+bool CWorkspaceGUI::SaveWorkspace()
+{
+    QString savePath = QFileDialog::getSaveFileName(this, tr("Save Workspace"), m_lastSavePath, tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+    if (savePath.isEmpty())
+        return false;
+
+    m_lastSavePath = QFileInfo(savePath).absolutePath();
+
+    QSettings settings(savePath, QSettings::IniFormat);
+    return this->Store(settings);
+}
+
+
+bool CWorkspaceGUI::LoadWorkspace()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Workspace"), m_lastLoadPath, tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+    if (filePath.isEmpty())
+        return false;
+
+    m_lastLoadPath = QFileInfo(filePath).absolutePath();
+
+    QSettings settings(filePath, QSettings::IniFormat);
+    return this->Restore(settings);
 }
 
 
