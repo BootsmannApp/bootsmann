@@ -796,15 +796,16 @@ void QSourceHighliter::xmlHighlighter(const QString &text) {
     setFormat(0, textLen, _formats[CodeBlock]);
 
     for (int i = 0; i < textLen; ++i) {
-        if (text[i] == QLatin1Char('<') && text[i+1] != QLatin1Char('!')) {
+        if (i < textLen-1)
+            if (text[i] == QLatin1Char('<') && text[i+1] != QLatin1Char('!')) {
 
-            const int found = text.indexOf(QLatin1Char('>'), i);
-            if (found > 0) {
-                ++i;
-                if (text[i] == QLatin1Char('/')) ++i;
-                setFormat(i, found - i, _formats[CodeKeyWord]);
+                const int found = text.indexOf(QLatin1Char('>'), i);
+                if (found > 0) {
+                    ++i;
+                    if (text[i] == QLatin1Char('/')) ++i;
+                    setFormat(i, found - i, _formats[CodeKeyWord]);
+                }
             }
-        }
 
         if (text[i] == QLatin1Char('=')) {
             int lastSpace = text.lastIndexOf(QLatin1Char(' '), i);
