@@ -260,7 +260,7 @@ void CRequestGUI::on_RequestURL_editingFinished()
         
     // parse URL and update request parameters
     QString request = ui->RequestURL->text().trimmed();
-    QUrl sourceUrl(request);
+    QUrl sourceUrl = QUrl::fromUserInput(request);
 
 	// check authentication type
 	auto userName = sourceUrl.userName();
@@ -474,9 +474,8 @@ void CRequestGUI::RebuildURL()
 	QString fragment = sourceUrl.fragment();
 
     // cut parameters from the URL
-    QUrl targetUrl(sourceUrl.adjusted(QUrl::RemoveQuery));
+    QUrl targetUrl(sourceUrl.adjusted(QUrl::RemoveQuery | QUrl::RemoveUserInfo));
 	
-	//targetUrl.setQuery(""); // Clear existing query parameters
 	auto params = ui->RequestParams->GetEnabledParams();
     if (!params.isEmpty()) {
         QStringList queryParts;
@@ -485,6 +484,8 @@ void CRequestGUI::RebuildURL()
         }
         targetUrl.setQuery(queryParts.join("&")); // Set new query parameters
 	}
+    else
+		targetUrl.setQuery(""); // Clear query if no parameters
 
     // update login:password
     if (ui->AuthType->currentIndex() == 0) { // No authentication
@@ -494,8 +495,13 @@ void CRequestGUI::RebuildURL()
     if (ui->AuthType->currentIndex() == 1) { // Basic authentication
         QString login = ui->AuthUser->text().trimmed();
         QString password = ui->AuthPassword->text().trimmed();
-        targetUrl.setUserName(login);
-        targetUrl.setPassword(password);
+
+        if (login.isEmpty() && password.isEmpty()) {
+            targetUrl.setUserInfo(""); // Clear user info
+        } else {
+            targetUrl.setUserName(login);
+            targetUrl.setPassword(password);
+		}
     } 
 
 	qDebug() << targetUrl.toString(QUrl::PrettyDecoded);

@@ -152,6 +152,9 @@
                  <height>0</height>
                 </size>
                </property>
+               <property name="toolTip">
+                <string>Request data type</string>
+               </property>
                <item>
                 <property name="text">
                  <string>Plain</string>
@@ -189,15 +192,29 @@
              </item>
              <item>
               <widget class="QPushButton" name="LoadRequestBody">
+               <property name="toolTip">
+                <string>Load body content from a file</string>
+               </property>
                <property name="text">
                 <string>Load...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Load</normaloff>:/Icons/Load</iconset>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="ResetRequestBody">
+               <property name="toolTip">
+                <string>Reset body content</string>
+               </property>
                <property name="text">
                 <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Reset</normaloff>:/Icons/Reset</iconset>
                </property>
               </widget>
              </item>
@@ -281,6 +298,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="AddParameter">
+               <property name="toolTip">
+                <string>Add new parameter</string>
+               </property>
                <property name="text">
                 <string>Add</string>
                </property>
@@ -292,6 +312,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="RemoveParameter">
+               <property name="toolTip">
+                <string>Remove current parameter</string>
+               </property>
                <property name="text">
                 <string>Remove</string>
                </property>
@@ -303,8 +326,15 @@
              </item>
              <item>
               <widget class="QPushButton" name="ClearParameters">
+               <property name="toolTip">
+                <string>Reset parameters</string>
+               </property>
                <property name="text">
                 <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Reset</normaloff>:/Icons/Reset</iconset>
                </property>
               </widget>
              </item>
@@ -362,6 +392,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="AddHeader">
+               <property name="toolTip">
+                <string>Add header</string>
+               </property>
                <property name="text">
                 <string>Add</string>
                </property>
@@ -373,15 +406,29 @@
              </item>
              <item>
               <widget class="QPushButton" name="RemoveHeader">
+               <property name="toolTip">
+                <string>Remove current header</string>
+               </property>
                <property name="text">
                 <string>Remove</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Remove</normaloff>:/Icons/Remove</iconset>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="ClearHeaders">
+               <property name="toolTip">
+                <string>Reset headers to defaults</string>
+               </property>
                <property name="text">
                 <string>Reset</string>
+               </property>
+               <property name="icon">
+                <iconset resource="Bootsmann.qrc">
+                 <normaloff>:/Icons/Reset</normaloff>:/Icons/Reset</iconset>
                </property>
               </widget>
              </item>
@@ -410,6 +457,9 @@
                  <width>100</width>
                  <height>0</height>
                 </size>
+               </property>
+               <property name="toolTip">
+                <string>Authentification used</string>
                </property>
                <item>
                 <property name="text">
@@ -588,6 +638,9 @@
                    <width>100</width>
                    <height>0</height>
                   </size>
+                 </property>
+                 <property name="toolTip">
+                  <string>Responce data type</string>
                  </property>
                  <item>
                   <property name="text">
@@ -769,23 +822,68 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="ServerErrorText">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>&lt;...&gt;</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-         <property name="textInteractionFlags">
-          <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="ServerErrorText">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>&lt;...&gt;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Orientation::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="SaveContent">
+           <property name="toolTip">
+            <string>Save content to a file</string>
+           </property>
+           <property name="text">
+            <string>Save...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Bootsmann.qrc">
+             <normaloff>:/Icons/Save</normaloff>:/Icons/Save</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="CopyContent">
+           <property name="toolTip">
+            <string>Copy content to clipboard</string>
+           </property>
+           <property name="text">
+            <string>Copy</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Bootsmann.qrc">
+             <normaloff>:/Icons/Copy</normaloff>:/Icons/Copy</iconset>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>

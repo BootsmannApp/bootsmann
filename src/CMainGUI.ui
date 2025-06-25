@@ -85,6 +85,10 @@
    </property>
   </action>
   <action name="actionSaveRequest">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Save</normaloff>:/Icons/Save</iconset>
+   </property>
    <property name="text">
     <string>Save Request...</string>
    </property>
@@ -96,6 +100,10 @@
    </property>
   </action>
   <action name="actionLoadRequest">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Load</normaloff>:/Icons/Load</iconset>
+   </property>
    <property name="text">
     <string>Load Request...</string>
    </property>
@@ -117,6 +125,10 @@
    </property>
   </action>
   <action name="actionCloseWorkspace">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Reset</normaloff>:/Icons/Reset</iconset>
+   </property>
    <property name="text">
     <string>Close Workspace</string>
    </property>
@@ -125,6 +137,10 @@
    </property>
   </action>
   <action name="actionLoadWorkspace">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Load</normaloff>:/Icons/Load</iconset>
+   </property>
    <property name="text">
     <string>Load Workspace...</string>
    </property>
@@ -133,6 +149,10 @@
    </property>
   </action>
   <action name="actionSaveWorkspace">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Save</normaloff>:/Icons/Save</iconset>
+   </property>
    <property name="text">
     <string>Save Workspace...</string>
    </property>
