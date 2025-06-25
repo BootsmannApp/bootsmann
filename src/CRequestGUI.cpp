@@ -624,10 +624,14 @@ void CRequestGUI::OnRequestDone()
 			// HTTP 200 OK
             errorString = ""; // Clear status reason for 200 OK
         }
+
+        Q_EMIT RequestDone();
     }
     else
     {
         statusText = tr("FAILED: %1").arg(errorCode);
+
+        Q_EMIT RequestFailed();
     }
 
     if (!statusReason.isEmpty()) {
@@ -644,6 +648,8 @@ void CRequestGUI::OnRequestError(QNetworkReply::NetworkError code)
 {
     auto reply = qobject_cast<QNetworkReply*>(sender());
     auto errorText = reply->errorString();
+
+    Q_EMIT RequestFailed();
 }
 
 
@@ -658,6 +664,8 @@ void CRequestGUI::LockRequest()
     ui->RemoveHeader->setEnabled(false);
     ui->ClearHeaders->setEnabled(false);
     ui->ReplyDataType->setEnabled(false);
+
+    Q_EMIT RequestStarted();
 }
 
 
@@ -689,6 +697,8 @@ void CRequestGUI::ClearResult()
     m_replyHL->setDocument(nullptr);
     ui->ServerErrorText->hide();
     ui->ReplyDataInfo->clear();
+
+    Q_EMIT RequestCleared();
 }
 
 

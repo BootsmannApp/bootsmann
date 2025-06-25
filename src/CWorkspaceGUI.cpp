@@ -251,6 +251,22 @@ int CWorkspaceGUI::AddRequestTab()
 		    ui->Tabs->setTabText(index, title);
 	});
 
+    connect(requestUI, &CRequestGUI::RequestFailed, this, [=](){
+        ui->Tabs->tabBar()->setTabTextColor(index, Qt::red);
+	});
+
+    connect(requestUI, &CRequestGUI::RequestDone, this, [=](){
+		ui->Tabs->tabBar()->setTabTextColor(index, Qt::darkGreen);
+    });
+
+    connect(requestUI, &CRequestGUI::RequestCleared, this, [=]() {
+        ui->Tabs->tabBar()->setTabTextColor(index, Qt::black);
+    });
+
+    connect(requestUI, &CRequestGUI::RequestStarted, this, [=]() {
+        ui->Tabs->tabBar()->setTabTextColor(index, Qt::gray);
+    });
+
     return index;
 }
 

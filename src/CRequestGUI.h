@@ -33,6 +33,10 @@ public:
 
 Q_SIGNALS:
     void RequestTitleChanged(const QString& title);
+    void RequestFailed();
+    void RequestDone();
+    void RequestCleared();
+    void RequestStarted();
 
 public Q_SLOTS:
     void OnRequestDone();
