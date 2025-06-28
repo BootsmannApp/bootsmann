@@ -9,6 +9,9 @@
 #include <QImageReader>
 #include <QBuffer>
 #include <QFileDialog>
+#include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
 
 
 CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
@@ -254,8 +257,6 @@ void CRequestGUI::on_ClearParameters_clicked()
     // Update URL
     RebuildURL();
 }
-
-
 
 
 void CRequestGUI::on_AuthType_currentIndexChanged(int index)
@@ -645,6 +646,9 @@ void CRequestGUI::OnRequestDone()
     m_replyData = reply->readAll();
     DecodeReply(reply, m_replyData);
 
+	ui->SaveReplyContent->setEnabled(m_replyData.size());
+	ui->CopyReplyContent->setEnabled(m_replyData.size());
+
     // update status
     auto errorCode = reply->error();
 	auto errorString = reply->errorString();
@@ -700,6 +704,8 @@ void CRequestGUI::LockRequest()
     ui->RemoveHeader->setEnabled(false);
     ui->ClearHeaders->setEnabled(false);
     ui->ReplyDataType->setEnabled(false);
+    ui->SaveReplyContent->setEnabled(false);
+    ui->CopyReplyContent->setEnabled(false);
 
     Q_EMIT RequestStarted();
 }
@@ -716,6 +722,8 @@ void CRequestGUI::UnlockRequest()
     ui->RemoveHeader->setEnabled(true);
     ui->ClearHeaders->setEnabled(true);
     ui->ReplyDataType->setEnabled(true);
+    ui->SaveReplyContent->setEnabled(true);
+    ui->CopyReplyContent->setEnabled(true);
 }
 
 
@@ -733,6 +741,8 @@ void CRequestGUI::ClearResult()
     m_replyHL->setDocument(nullptr);
     ui->ServerErrorText->hide();
     ui->ReplyDataInfo->clear();
+	ui->SaveReplyContent->setEnabled(false);
+	ui->CopyReplyContent->setEnabled(false);
 
     Q_EMIT RequestCleared();
 }
@@ -980,14 +990,19 @@ void CRequestGUI::on_CopyReplyContent_clicked()
     switch (replyTypeChosen)
     {
     case CRequestGUI::DT_PLAIN:
-        break;
     case CRequestGUI::DT_HTML:
-        break;
     case CRequestGUI::DT_JSON:
+		qApp->clipboard()->setText(ui->ResponseText->toPlainText());
         break;
     case CRequestGUI::DT_IMAGE:
+		qApp->clipboard()->setImage(QImage::fromData(m_replyData));
         break;
     case CRequestGUI::DT_HEX:
+    {
+		auto mimeData = new QMimeData();
+		mimeData->setData("application/octet-stream", m_replyData);
+		qApp->clipboard()->setMimeData(mimeData);
+    }
         break;
     default:
         break;
