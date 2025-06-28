@@ -1,5 +1,5 @@
 # Bootsmann
-A minimalistic, lean and fast HTTP REST API test application (opensource C++ alternative to Postman/Insomnia/Hoppscotch etc.).
+A minimalistic, lean and fast HTTP REST API test application (opensource C++ alternative to Postman/Insomnia/Hoppscotch for simple HTTP REST API testing).
 It is especially useful for embedded devices and local development, where low memory usage and fast response times are crucial.
 
 ![image](https://github.com/user-attachments/assets/a1f042e7-9da4-4321-bbbe-0adbba0fafdd)
@@ -14,6 +14,13 @@ It is especially useful for embedded devices and local development, where low me
 - **Multiplatform**: Runs on various operating systems including Windows, macOS, and Linux - thanks to Qt framework.
 - **Intuitive**: Provides a simple (but functional) graphical user interface.
 - **Open source**: Available under the MIT License, allowing for free use, modification, and distribution.
+
+## Capabilities
+- Building and executing HTTP requests visually
+- Parsing and visualising server replies in a human-convenient form
+- Basic user authentification
+- Visual editing of parameters and headers
+- Common file and clipboard operations
 
 ## Measurements
 
