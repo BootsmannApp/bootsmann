@@ -7,9 +7,9 @@
 #include <QMutex>
 
 class QHexView: public QAbstractScrollArea
-
 {
 	Q_OBJECT
+
 	public:
 		class DataStorage
 		{
@@ -40,12 +40,10 @@ class QHexView: public QAbstractScrollArea
 				QFile      m_file;
 		};
 
-
-
 		QHexView(QWidget *parent = 0);
 		~QHexView();
 
-	public slots:
+	public Q_SLOTS:
 		void setData(DataStorage *pData);
 		void clear();
 		void showFromOffset(std::size_t offset);
@@ -56,6 +54,7 @@ class QHexView: public QAbstractScrollArea
 		void keyPressEvent(QKeyEvent *event);
 		void mouseMoveEvent(QMouseEvent *event);
 		void mousePressEvent(QMouseEvent *event);
+
 	private:
 		QMutex                m_dataMtx;
 		DataStorage          *m_pdata;
@@ -64,7 +63,6 @@ class QHexView: public QAbstractScrollArea
 		std::size_t           m_posAscii;
 		std::size_t           m_charWidth;
 		std::size_t           m_charHeight;
-
 
 		std::size_t           m_selectBegin;
 		std::size_t           m_selectEnd;

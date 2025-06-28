@@ -53,6 +53,10 @@ private Q_SLOTS:
 	void on_RemoveParameter_clicked();
 	void on_ClearParameters_clicked();
 
+    void on_AuthType_currentIndexChanged(int index);
+    void on_AuthUser_editingFinished();
+    void on_AuthPassword_editingFinished();
+
     void on_RequestURL_editingFinished();
     void on_RequestType_currentIndexChanged(int index);
 	void on_RequestParams_cellChanged(int row, int column);
@@ -61,10 +65,8 @@ private Q_SLOTS:
 	void on_ResetRequestBody_clicked();
 
 	void on_ReplyDataType_currentIndexChanged(int index);
-
-	void on_AuthType_currentIndexChanged(int index);
-	void on_AuthUser_editingFinished();
-	void on_AuthPassword_editingFinished();
+	void on_SaveReplyContent_clicked();
+	void on_CopyReplyContent_clicked();
 
 private:
     void SetDefaultHeaders();
@@ -92,6 +94,11 @@ private:
     };
     bool ShowReplyContent(ReplyDisplayType showType, const QByteArray& data, const QString& contentType = "");
     void ShowPlainText(const QString& text, bool append);
+
+	static bool WriteAsText(const QString& fileName, const QString& content);
+	static bool WriteAsBin(const QString& fileName, const QByteArray& content);
+	static bool WriteAsHex(const QString& fileName, const QByteArray& content);
+	static bool WriteAsImage(const QString& fileName, const QByteArray& content);
 
     Ui::CRequestGUI *ui;
 

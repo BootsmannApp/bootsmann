@@ -468,7 +468,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>Open</string>
+                 <string>Unencrypted</string>
                 </property>
                </item>
               </widget>
@@ -688,6 +688,47 @@
                  </property>
                 </widget>
                </item>
+               <item>
+                <spacer name="horizontalSpacer_6">
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="SaveReplyContent">
+                 <property name="toolTip">
+                  <string>Save content to a file</string>
+                 </property>
+                 <property name="text">
+                  <string>Save...</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="Bootsmann.qrc">
+                   <normaloff>:/Icons/Save</normaloff>:/Icons/Save</iconset>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="CopyReplyContent">
+                 <property name="toolTip">
+                  <string>Copy content to clipboard</string>
+                 </property>
+                 <property name="text">
+                  <string>Copy</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="Bootsmann.qrc">
+                   <normaloff>:/Icons/Copy</normaloff>:/Icons/Copy</iconset>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </item>
              <item>
@@ -839,47 +880,6 @@
            </property>
            <property name="textInteractionFlags">
             <set>Qt::TextInteractionFlag::LinksAccessibleByMouse|Qt::TextInteractionFlag::TextSelectableByKeyboard|Qt::TextInteractionFlag::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_6">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="SaveContent">
-           <property name="toolTip">
-            <string>Save content to a file</string>
-           </property>
-           <property name="text">
-            <string>Save...</string>
-           </property>
-           <property name="icon">
-            <iconset resource="Bootsmann.qrc">
-             <normaloff>:/Icons/Save</normaloff>:/Icons/Save</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="CopyContent">
-           <property name="toolTip">
-            <string>Copy content to clipboard</string>
-           </property>
-           <property name="text">
-            <string>Copy</string>
-           </property>
-           <property name="icon">
-            <iconset resource="Bootsmann.qrc">
-             <normaloff>:/Icons/Copy</normaloff>:/Icons/Copy</iconset>
            </property>
           </widget>
          </item>

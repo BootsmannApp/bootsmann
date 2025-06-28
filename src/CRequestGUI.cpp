@@ -44,6 +44,8 @@ CRequestGUI::~CRequestGUI()
 }
 
 
+// process requests
+
 void CRequestGUI::Init()
 {
     ClearResult();
@@ -250,6 +252,40 @@ void CRequestGUI::on_ClearParameters_clicked()
     ui->RequestParams->setRowCount(0);
 
     // Update URL
+    RebuildURL();
+}
+
+
+
+
+void CRequestGUI::on_AuthType_currentIndexChanged(int index)
+{
+    if (index == 0) {
+        ui->AuthStack->setCurrentIndex(0); // No authentication
+    }
+    else if (index == 1) {
+        ui->AuthStack->setCurrentIndex(1); // Basic authentication
+        ui->AuthUser->setFocus(); // Set focus to the login field
+    }
+    else if (index == 2) {
+        ui->AuthStack->setCurrentIndex(2); // Bearer token authentication
+    }
+    else {
+        ui->AuthStack->setCurrentIndex(3); // Custom authentication
+    }
+
+    RebuildURL();
+}
+
+
+void CRequestGUI::on_AuthUser_editingFinished()
+{
+    RebuildURL();
+}
+
+
+void CRequestGUI::on_AuthPassword_editingFinished()
+{
     RebuildURL();
 }
 
@@ -746,6 +782,59 @@ void CRequestGUI::ShowPlainText(const QString& text, bool append)
 }
 
 
+bool CRequestGUI::WriteAsText(const QString& filePath, const QString& content)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+        QMessageBox::warning(nullptr, tr("Error"), tr("Could not open file for writing: %1").arg(file.errorString()));
+        return false;
+    }
+
+	QTextStream out(&file);
+	out << content;
+
+    return true;
+}
+
+
+bool CRequestGUI::WriteAsBin(const QString& filePath, const QByteArray& content)
+{
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+        QMessageBox::warning(nullptr, tr("Error"), tr("Could not open file for writing: %1").arg(file.errorString()));
+        return false;
+    }
+
+	file.write(content);
+
+    return true;
+}
+
+
+bool CRequestGUI::WriteAsHex(const QString& fileName, const QByteArray& content)
+{
+	QString txt = content.toHex(' ').toUpper();
+	return WriteAsText(fileName, txt);
+}
+
+
+bool CRequestGUI::WriteAsImage(const QString& fileName, const QByteArray& content)
+{
+	QImage image;
+    if (!image.loadFromData(content)) {
+        QMessageBox::warning(nullptr, tr("Error"), tr("Could not write image content"));
+        return false;
+    }
+
+    if (!image.save(fileName)) {
+        QMessageBox::warning(nullptr, tr("Error"), tr("Could not save image to file: %1").arg(fileName));
+        return false;
+	}
+
+    return true;
+}
+
+
 bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& data, const QString& contentType)
 {
     int cbIndex = (int)showType;
@@ -819,32 +908,88 @@ void CRequestGUI::on_ReplyDataType_currentIndexChanged(int index)
 }
 
 
-void CRequestGUI::on_AuthType_currentIndexChanged(int index)
+void CRequestGUI::on_SaveReplyContent_clicked()
 {
-    if (index == 0) {
-        ui->AuthStack->setCurrentIndex(0); // No authentication
-    } else if (index == 1) {
-        ui->AuthStack->setCurrentIndex(1); // Basic authentication
-		ui->AuthUser->setFocus(); // Set focus to the login field
-    } else if (index == 2) {
-        ui->AuthStack->setCurrentIndex(2); // Bearer token authentication
-    } else {
-        ui->AuthStack->setCurrentIndex(3); // Custom authentication
-	}
+	QString filter = tr("All files (*)");
+    int openFlag = 0;
 
-    RebuildURL();
+	ReplyDisplayType replyTypeChosen = (ReplyDisplayType)ui->ReplyDataType->currentIndex();
+
+    switch (replyTypeChosen)
+    {   
+    case CRequestGUI::DT_PLAIN:
+		filter = tr("Text files (*.txt)") + ";;" + filter;
+		openFlag = QIODevice::Text;
+        break;
+    case CRequestGUI::DT_HTML:
+		filter = tr("HTML files (*.html)") + ";;" + filter;
+        openFlag = QIODevice::Text;
+        break;
+    case CRequestGUI::DT_JSON:
+		filter = tr("JSON files (*.json)") + ";;" + filter;
+        openFlag = QIODevice::Text;
+        break;
+    case CRequestGUI::DT_IMAGE:
+        filter =
+            tr("Windows Bitmap (*.bmp)") + ";;" +
+            tr("Portable Network Graphics (*.png)") + ";;" +
+            tr("Joint Photographic Experts Group (*.jpg *.jpeg)") + ";;" +
+            tr("Portable Pixmap (*.ppm)") + ";;" + 
+            tr("X11 Pixmap (*.xpm)") + ";;" + 
+            filter;
+        break;
+    case CRequestGUI::DT_HEX:
+		filter = tr("Hex text files (*.hex);;Binary files (*.bin)") + ";;" + filter;
+        break;
+    default:
+		return; // Unsupported type
+    }
+
+	QString selectedFilter;
+	QString filePath = QFileDialog::getSaveFileName(this, tr("Save Reply Content"), "", filter, &selectedFilter);
+    if (filePath.isEmpty())
+		return; // User canceled the save dialog
+
+    switch (replyTypeChosen)
+    {
+    case CRequestGUI::DT_PLAIN:
+    case CRequestGUI::DT_HTML:
+    case CRequestGUI::DT_JSON:
+		WriteAsText(filePath, ui->ResponseText->toPlainText());
+        break;
+    case CRequestGUI::DT_IMAGE:
+        WriteAsImage(filePath, m_replyData);
+        break;
+    case CRequestGUI::DT_HEX:
+        // Save as hex or binary
+        if (filePath.toLower().endsWith(".hex"))
+            WriteAsHex(filePath, m_replyData);
+        else
+			WriteAsBin(filePath, m_replyData);
+        break;
+    default:
+        break;
+    }
 }
 
 
-void CRequestGUI::on_AuthUser_editingFinished()
+void CRequestGUI::on_CopyReplyContent_clicked()
 {
-    RebuildURL();
+    ReplyDisplayType replyTypeChosen = (ReplyDisplayType)ui->ReplyDataType->currentIndex();
+
+    switch (replyTypeChosen)
+    {
+    case CRequestGUI::DT_PLAIN:
+        break;
+    case CRequestGUI::DT_HTML:
+        break;
+    case CRequestGUI::DT_JSON:
+        break;
+    case CRequestGUI::DT_IMAGE:
+        break;
+    case CRequestGUI::DT_HEX:
+        break;
+    default:
+        break;
+    }
 }
-
-
-void CRequestGUI::on_AuthPassword_editingFinished()
-{
-    RebuildURL();
-}
-
-
