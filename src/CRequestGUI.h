@@ -6,6 +6,7 @@
 #include <QNetworkCacheMetaData>
 #include <QElapsedTimer>
 #include <QSettings>
+#include <QWebEngineView>
 
 #include <QHexView.h>
 #include <QSourceHighliter.h>
@@ -16,6 +17,8 @@ class CRequestGUI;
 }
 
 class CRequestManager;
+
+class QTableWidget;
 
 class CRequestGUI : public QWidget
 {
@@ -48,6 +51,8 @@ private Q_SLOTS:
 	void on_AddHeader_clicked();
     void on_RemoveHeader_clicked();
 	void on_ClearHeaders_clicked();
+    void on_SaveRequestHeadersContent_clicked();
+    void on_CopyRequestHeadersContent_clicked();
 
 	void on_AddParameter_clicked();
 	void on_RemoveParameter_clicked();
@@ -65,8 +70,11 @@ private Q_SLOTS:
 	void on_ResetRequestBody_clicked();
 
 	void on_ReplyDataType_currentIndexChanged(int index);
+    void on_HtmlAsTextRB_toggled(bool) { UpdateHtmlReply(); }
 	void on_SaveReplyContent_clicked();
 	void on_CopyReplyContent_clicked();
+    void on_SaveHeadersContent_clicked();
+    void on_CopyHeadersContent_clicked();
 
 private:
     void SetDefaultHeaders();
@@ -94,11 +102,14 @@ private:
     };
     bool ShowReplyContent(ReplyDisplayType showType, const QByteArray& data, const QString& contentType = "");
     void ShowPlainText(const QString& text, bool append);
+    void UpdateHtmlReply();
 
 	static bool WriteAsText(const QString& fileName, const QString& content);
 	static bool WriteAsBin(const QString& fileName, const QByteArray& content);
 	static bool WriteAsHex(const QString& fileName, const QByteArray& content);
 	static bool WriteAsImage(const QString& fileName, const QByteArray& content);
+
+	static QString GetHeadersAsText(QTableWidget* table);
 
     Ui::CRequestGUI *ui;
 
@@ -107,6 +118,7 @@ private:
 
 	QByteArray m_replyData;
     QHexView *m_hexView = nullptr;
+	QWebEngineView* m_webView = nullptr;
 
     QSourceHighlite::QSourceHighliter* m_requestHL = nullptr;
     QSourceHighlite::QSourceHighliter* m_replyHL = nullptr;

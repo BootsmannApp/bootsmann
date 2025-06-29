@@ -35,6 +35,9 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 
     m_requestHL = new QSourceHighlite::QSourceHighliter(nullptr);
     m_replyHL = new QSourceHighlite::QSourceHighliter(nullptr);
+
+	m_webView = new QWebEngineView(ui->ReplyStack);
+	ui->ReplyStack->addWidget(m_webView);
 }
 
 
@@ -206,6 +209,31 @@ void CRequestGUI::on_ClearHeaders_clicked()
 	ui->RequestHeaders->setRowCount(0);
     SetDefaultHeaders();
 	ui->RequestHeaders->setCurrentCell(0, 0); // Set focus to the first cell
+}
+
+
+void CRequestGUI::on_SaveRequestHeadersContent_clicked()
+{
+    QString filter = tr("All files (*)");
+    filter = tr("Text files (*.txt)") + ";;" + filter;
+
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Save Headers Content"), "", filter);
+    if (filePath.isEmpty())
+        return; // User canceled the save dialog
+
+    QString content = GetHeadersAsText(ui->RequestHeaders);
+
+    if (!WriteAsText(filePath, content)) {
+        //QMessageBox::warning(this, tr("Error"), tr("Could not save headers to file: %1").arg(filePath));
+    }
+}
+
+
+void CRequestGUI::on_CopyRequestHeadersContent_clicked()
+{
+    QString content = GetHeadersAsText(ui->RequestHeaders);
+
+    qApp->clipboard()->setText(content);
 }
 
 
@@ -648,6 +676,8 @@ void CRequestGUI::OnRequestDone()
 
 	ui->SaveReplyContent->setEnabled(m_replyData.size());
 	ui->CopyReplyContent->setEnabled(m_replyData.size());
+    ui->SaveHeadersContent->setEnabled(m_replyData.size());
+    ui->CopyHeadersContent->setEnabled(m_replyData.size());
 
     // update status
     auto errorCode = reply->error();
@@ -724,6 +754,8 @@ void CRequestGUI::UnlockRequest()
     ui->ReplyDataType->setEnabled(true);
     ui->SaveReplyContent->setEnabled(true);
     ui->CopyReplyContent->setEnabled(true);
+	ui->SaveHeadersContent->setEnabled(true);
+    ui->CopyHeadersContent->setEnabled(true);
 }
 
 
@@ -743,6 +775,9 @@ void CRequestGUI::ClearResult()
     ui->ReplyDataInfo->clear();
 	ui->SaveReplyContent->setEnabled(false);
 	ui->CopyReplyContent->setEnabled(false);
+	ui->SaveHeadersContent->setEnabled(false);
+	ui->CopyHeadersContent->setEnabled(false);
+    ui->HtmlType->hide();
 
     Q_EMIT RequestCleared();
 }
@@ -789,6 +824,17 @@ void CRequestGUI::ShowPlainText(const QString& text, bool append)
         ui->ResponseText->setPlainText(text);
     
     ui->ReplyStack->setCurrentIndex(2);
+}
+
+
+void CRequestGUI::UpdateHtmlReply()
+{
+    if (ui->HtmlAsTextRB->isChecked()) {
+        ui->ReplyStack->setCurrentIndex(2); // Show as plain text
+    }
+    else {
+        ui->ReplyStack->setCurrentIndex(3); // Show as HTML preview
+    }
 }
 
 
@@ -850,6 +896,8 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
     int cbIndex = (int)showType;
     ui->ReplyDataType->setCurrentIndex(cbIndex);
 
+	ui->HtmlType->setVisible(showType == DT_HTML);
+
     switch (showType)
     {
     case DT_IMAGE:
@@ -864,8 +912,11 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
             QImageReader reader(&buffer);
             QString format = reader.format().toUpper();
 
+            ui->ResponsePreview->setUpdatesEnabled(false);
             ui->ResponsePreview->document()->addResource(QTextDocument::ImageResource, QUrl("image://pm"), pm);
             ui->ResponsePreview->setHtml(QString("<img src='image://pm'/>"));
+			ui->ResponsePreview->setUpdatesEnabled(true);
+
 			ui->ReplyDataInfo->setText(QString("   %3   %1x%2").arg(pm.width()).arg(pm.height()).arg(format));
         }
         else
@@ -893,7 +944,20 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
     case DT_HTML:
         m_replyHL->setDocument(ui->ResponseText->document());
         m_replyHL->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeXML);
-        ShowPlainText(QString::fromUtf8(data), false);
+
+        {
+            QString htmlContent = QString::fromUtf8(data);
+            ShowPlainText(htmlContent, false);
+
+			//m_webView->setUrl(QUrl("data:text/html;charset=utf-8," + QUrl::toPercentEncoding(htmlContent)));
+            m_webView->setHtml(htmlContent, ui->RequestURL->text());
+
+			//ui->ResponsePreview->setUpdatesEnabled(false);
+   //         ui->ResponsePreview->setHtml(htmlContent);
+			//ui->ResponsePreview->setUpdatesEnabled(true);
+        }
+
+		UpdateHtmlReply();
         break;
 
     case DT_JSON:
@@ -921,7 +985,6 @@ void CRequestGUI::on_ReplyDataType_currentIndexChanged(int index)
 void CRequestGUI::on_SaveReplyContent_clicked()
 {
 	QString filter = tr("All files (*)");
-    int openFlag = 0;
 
 	ReplyDisplayType replyTypeChosen = (ReplyDisplayType)ui->ReplyDataType->currentIndex();
 
@@ -929,15 +992,12 @@ void CRequestGUI::on_SaveReplyContent_clicked()
     {   
     case CRequestGUI::DT_PLAIN:
 		filter = tr("Text files (*.txt)") + ";;" + filter;
-		openFlag = QIODevice::Text;
         break;
     case CRequestGUI::DT_HTML:
 		filter = tr("HTML files (*.html)") + ";;" + filter;
-        openFlag = QIODevice::Text;
         break;
     case CRequestGUI::DT_JSON:
 		filter = tr("JSON files (*.json)") + ";;" + filter;
-        openFlag = QIODevice::Text;
         break;
     case CRequestGUI::DT_IMAGE:
         filter =
@@ -1007,4 +1067,43 @@ void CRequestGUI::on_CopyReplyContent_clicked()
     default:
         break;
     }
+}
+
+
+QString CRequestGUI::GetHeadersAsText(QTableWidget* table)
+{
+    QString content;
+    for (int i = 0; i < table->rowCount(); ++i) {
+        auto nameItem = table->item(i, 0);
+        auto valueItem = table->item(i, 1);
+        if (nameItem && valueItem) {
+            content += QString("%1: %2\n").arg(nameItem->text(), valueItem->text());
+        }
+    }
+    return content;
+}
+
+
+void CRequestGUI::on_SaveHeadersContent_clicked()
+{
+    QString filter = tr("All files (*)");
+    filter = tr("Text files (*.txt)") + ";;" + filter;
+
+    QString filePath = QFileDialog::getSaveFileName(this, tr("Save Headers Content"), "", filter);
+    if (filePath.isEmpty())
+        return; // User canceled the save dialog
+
+	QString content = GetHeadersAsText(ui->ResponseHeaders);
+
+    if (!WriteAsText(filePath, content)) {
+        //QMessageBox::warning(this, tr("Error"), tr("Could not save headers to file: %1").arg(filePath));
+	}
+}
+
+
+void CRequestGUI::on_CopyHeadersContent_clicked()
+{
+    QString content = GetHeadersAsText(ui->ResponseHeaders);
+
+    qApp->clipboard()->setText(content);
 }

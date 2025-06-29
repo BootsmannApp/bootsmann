@@ -1,5 +1,6 @@
 QT += core gui network
 QT += widgets
+QT += webenginewidgets
 
 CONFIG += c++17
 
