@@ -59,8 +59,9 @@ private Q_SLOTS:
 	void on_ClearParameters_clicked();
 
     void on_AuthType_currentIndexChanged(int index);
-    void on_AuthUser_editingFinished();
-    void on_AuthPassword_editingFinished();
+    void on_AuthUser_editingFinished()      { RebuildURL(); }
+    void on_AuthPassword_editingFinished()  { RebuildURL(); }
+	void on_AuthToken_editingFinished()     { RebuildURL(); }
 
     void on_RequestURL_editingFinished();
     void on_RequestType_currentIndexChanged(int index);

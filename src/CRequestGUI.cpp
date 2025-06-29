@@ -87,6 +87,7 @@ bool CRequestGUI::Store(QSettings& settings) const
 	settings.setValue("AuthType", ui->AuthType->currentIndex());
 	settings.setValue("AuthUser", ui->AuthUser->text().trimmed());
 	settings.setValue("AuthPassword", ui->AuthPassword->text().trimmed());
+    settings.setValue("AuthToken", ui->AuthToken->text().trimmed());
 	settings.endGroup();
 
     // UI
@@ -136,6 +137,7 @@ bool CRequestGUI::Restore(QSettings& settings)
 	int authType = settings.value("AuthType", 0).toInt();
 	ui->AuthUser->setText(settings.value("AuthUser", "").toString().trimmed());
 	ui->AuthPassword->setText(settings.value("AuthPassword", "").toString().trimmed());
+	ui->AuthToken->setText(settings.value("AuthToken", "").toString().trimmed());
     ui->AuthType->setCurrentIndex(authType);
     settings.endGroup();
 
@@ -298,23 +300,12 @@ void CRequestGUI::on_AuthType_currentIndexChanged(int index)
     }
     else if (index == 2) {
         ui->AuthStack->setCurrentIndex(2); // Bearer token authentication
+		ui->AuthToken->setFocus(); // Set focus to the token field
     }
     else {
         ui->AuthStack->setCurrentIndex(3); // Custom authentication
     }
 
-    RebuildURL();
-}
-
-
-void CRequestGUI::on_AuthUser_editingFinished()
-{
-    RebuildURL();
-}
-
-
-void CRequestGUI::on_AuthPassword_editingFinished()
-{
     RebuildURL();
 }
 
@@ -556,8 +547,7 @@ void CRequestGUI::RebuildURL()
     if (ui->AuthType->currentIndex() == 0) { // No authentication
         targetUrl.setUserInfo(""); // Clear user info
     } 
-    else 
-    if (ui->AuthType->currentIndex() == 1) { // Basic authentication
+    else if (ui->AuthType->currentIndex() == 1) { // Basic authentication
         QString login = ui->AuthUser->text().trimmed();
         QString password = ui->AuthPassword->text().trimmed();
 
@@ -567,7 +557,17 @@ void CRequestGUI::RebuildURL()
             targetUrl.setUserName(login);
             targetUrl.setPassword(password);
 		}
-    } 
+    }
+    else if (ui->AuthType->currentIndex() == 2) { // Bearer token authentication
+        targetUrl.setUserInfo(""); // Clear user info
+
+        QString token = ui->AuthToken->text().trimmed();
+        if (!token.isEmpty()) {
+			ui->RequestHeaders->AddRowIfNotExists("Authorization", "Bearer " + token);
+        } else {
+			ui->RequestHeaders->DeleteActiveRows("Authorization");
+        }
+    }
 
 	qDebug() << targetUrl.toString(QUrl::PrettyDecoded);
 

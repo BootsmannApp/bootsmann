@@ -144,7 +144,7 @@
        <item>
         <widget class="QTabWidget" name="RequestTabs">
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="RequestBodyTab">
           <attribute name="title">
@@ -508,6 +508,11 @@
                  <string>Unencrypted</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>Bearer Token</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item>
@@ -528,7 +533,7 @@
            <item>
             <widget class="QStackedWidget" name="AuthStack">
              <property name="currentIndex">
-              <number>1</number>
+              <number>2</number>
              </property>
              <widget class="QWidget" name="NoAuth"/>
              <widget class="QWidget" name="LoginPassAuth">
@@ -552,6 +557,20 @@
                </item>
                <item row="1" column="1">
                 <widget class="QLineEdit" name="AuthPassword"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="Bearer">
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Token</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="AuthToken"/>
                </item>
               </layout>
              </widget>
