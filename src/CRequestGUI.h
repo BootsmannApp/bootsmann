@@ -79,8 +79,8 @@ private Q_SLOTS:
 
 private:
     void SetDefaultHeaders();
-	void AddRequestHeader(const QString& name, const QString& value);
-	void AddRequestHeader(QNetworkRequest::KnownHeaders type, const QString& value);
+	void SetRequestHeader(const QString& name, const QString& value);
+	void SetRequestHeader(QNetworkRequest::KnownHeaders type, const QString& value);
 	void RemoveRequestHeader(const QString& name);
 	void RemoveRequestHeader(QNetworkRequest::KnownHeaders type);
     QNetworkCacheMetaData::RawHeaderList GetRequestHeaders() const;

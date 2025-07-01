@@ -513,6 +513,11 @@
                  <string>Bearer Token</string>
                 </property>
                </item>
+               <item>
+                <property name="text">
+                 <string>Basic</string>
+                </property>
+               </item>
               </widget>
              </item>
              <item>

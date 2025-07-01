@@ -15,10 +15,10 @@ It is especially useful for embedded devices and local development, where low me
 - **Intuitive**: Provides a simple (but functional) graphical user interface.
 - **Open source**: Available under the MIT License, allowing for free use, modification, and distribution.
 
-## Capabilities
+## Core Functionality
 - Building and executing HTTP requests visually
 - Parsing and visualising server replies in a human-convenient form
-- Basic user authentification
+- Basic user authentification (Unencrypted, Bearer token)
 - Visual editing of parameters and headers
 - Common file and clipboard operations
 

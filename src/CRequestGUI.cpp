@@ -12,6 +12,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QMenu>
 
 
 CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
@@ -23,8 +24,6 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 
     ui->splitter->setSizes(QList<int>({ INT_MAX, INT_MAX }));
 
-	SetDefaultHeaders();
-
     ui->RequestTabs->setCurrentIndex(0);
     ui->RequestBinaryLabel->hide();
     ui->RequestBody->show();
@@ -33,9 +32,31 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 
 	ui->ResponseHeaders->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
+    // headers
+    SetDefaultHeaders();
+
+	auto headerMenu = new QMenu(this);
+	ui->AddHeader->setMenu(headerMenu);
+
+    headerMenu->addAction(tr("Custom..."), this, [this]() {
+        ui->RequestHeaders->AddRow(tr("<New Header>"));
+    });
+
+    headerMenu->addSeparator();
+
+	// fill the header menu with known headers
+	auto& knownHeaders = CRequestManager::GetKnownHeaders();
+    for (const auto& header : knownHeaders) {
+        headerMenu->addAction(header, this, [this, header]() {
+            ui->RequestHeaders->AddRow(header);
+        });
+	}
+
+	// highlighters
     m_requestHL = new QSourceHighlite::QSourceHighliter(nullptr);
     m_replyHL = new QSourceHighlite::QSourceHighliter(nullptr);
 
+	// tbd: make dynamic
 	m_webView = new QWebEngineView(ui->ReplyStack);
 	ui->ReplyStack->addWidget(m_webView);
 }
@@ -175,7 +196,7 @@ bool CRequestGUI::IsDefault() const
 
 void CRequestGUI::on_AddHeader_clicked()
 {
-	AddRequestHeader("<New Header>", "");
+	SetRequestHeader(tr("<New Header>"), "");
 }
 
 
@@ -294,7 +315,7 @@ void CRequestGUI::on_AuthType_currentIndexChanged(int index)
     if (index == 0) {
         ui->AuthStack->setCurrentIndex(0); // No authentication
     }
-    else if (index == 1) {
+    else if (index == 1 || index == 3) {
         ui->AuthStack->setCurrentIndex(1); // Basic authentication
         ui->AuthUser->setFocus(); // Set focus to the login field
     }
@@ -387,26 +408,26 @@ void CRequestGUI::on_RequestDataType_currentIndexChanged(int index)
     {
     case DT_PLAIN:
         m_requestHL->setDocument(nullptr);
-        AddRequestHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
+        SetRequestHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
 	    break;
 
     case DT_JSON:
 		m_requestHL->setDocument(ui->RequestBody->document());
         m_requestHL->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeJSON);
-        AddRequestHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        SetRequestHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         break;
 
     case DT_HTML:
         m_requestHL->setDocument(ui->RequestBody->document());
         m_requestHL->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeXML);
-        AddRequestHeader(QNetworkRequest::ContentTypeHeader, "text/html");
+        SetRequestHeader(QNetworkRequest::ContentTypeHeader, "text/html");
         break;
 
     default:
         ui->RequestBinaryLabel->show();
         ui->RequestBody->hide();
         m_requestHL->setDocument(nullptr);
-        AddRequestHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+        SetRequestHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
         break;
     }
 }
@@ -469,20 +490,20 @@ void CRequestGUI::on_ResetRequestBody_clicked()
 
 void CRequestGUI::SetDefaultHeaders()
 {
-    AddRequestHeader(QNetworkRequest::UserAgentHeader, qApp->applicationName() + " " + qApp->applicationVersion());
-    AddRequestHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
+    SetRequestHeader(QNetworkRequest::UserAgentHeader, qApp->applicationName() + " " + qApp->applicationVersion());
+    SetRequestHeader(QNetworkRequest::ContentTypeHeader, "text/plain");
 }
 
 
-void CRequestGUI::AddRequestHeader(const QString& name, const QString& value)
+void CRequestGUI::SetRequestHeader(const QString& name, const QString& value)
 {
     ui->RequestHeaders->AddRowIfNotExists(name, value);
 }
 
 
-void CRequestGUI::AddRequestHeader(QNetworkRequest::KnownHeaders type, const QString& value)
+void CRequestGUI::SetRequestHeader(QNetworkRequest::KnownHeaders type, const QString& value)
 {
-    AddRequestHeader(CRequestManager::GetKnownHeader(type), value);
+    SetRequestHeader(CRequestManager::GetKnownHeader(type), value);
 }
 
 
@@ -547,7 +568,7 @@ void CRequestGUI::RebuildURL()
     if (ui->AuthType->currentIndex() == 0) { // No authentication
         targetUrl.setUserInfo(""); // Clear user info
     } 
-    else if (ui->AuthType->currentIndex() == 1) { // Basic authentication
+    else if (ui->AuthType->currentIndex() == 1) { // Unencrypted authentication
         QString login = ui->AuthUser->text().trimmed();
         QString password = ui->AuthPassword->text().trimmed();
 
@@ -568,6 +589,20 @@ void CRequestGUI::RebuildURL()
 			ui->RequestHeaders->DeleteActiveRows("Authorization");
         }
     }
+    else if (ui->AuthType->currentIndex() == 3) { // Basic authentication
+        targetUrl.setUserInfo(""); // Clear user info
+        
+        QString login = ui->AuthUser->text().trimmed();
+        QString password = ui->AuthPassword->text().trimmed();
+        if (login.isEmpty() && password.isEmpty()) {
+            ui->RequestHeaders->DeleteActiveRows("Authorization");
+        }
+        else {
+			QString pass = login + ":" + password;
+            QByteArray authData = pass.toUtf8().toBase64();
+			ui->RequestHeaders->AddRowIfNotExists("Authorization", "Basic " + QString::fromUtf8(authData));
+        }
+	}
 
 	qDebug() << targetUrl.toString(QUrl::PrettyDecoded);
 
