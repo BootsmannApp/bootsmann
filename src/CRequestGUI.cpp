@@ -55,10 +55,6 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 	// highlighters
     m_requestHL = new QSourceHighlite::QSourceHighliter(nullptr);
     m_replyHL = new QSourceHighlite::QSourceHighliter(nullptr);
-
-	// tbd: make dynamic
-	m_webView = new QWebEngineView(ui->ReplyStack);
-	ui->ReplyStack->addWidget(m_webView);
 }
 
 
@@ -868,6 +864,16 @@ void CRequestGUI::UpdateHtmlReply()
         ui->ReplyStack->setCurrentIndex(2); // Show as plain text
     }
     else {
+		// create web view dynamically if not created yet
+        if (!m_webView) {
+            m_webView = new QWebEngineView(ui->ResponsePreview);
+            ui->ReplyStack->addWidget(m_webView);
+
+            m_webView->setHtml(m_cachedHtml, m_cachedUrl);
+            m_cachedHtml.clear();
+            m_cachedUrl.clear();
+        }
+
         ui->ReplyStack->setCurrentIndex(3); // Show as HTML preview
     }
 }
@@ -985,11 +991,22 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
             ShowPlainText(htmlContent, false);
 
 			//m_webView->setUrl(QUrl("data:text/html;charset=utf-8," + QUrl::toPercentEncoding(htmlContent)));
-            m_webView->setHtml(htmlContent, ui->RequestURL->text());
 
-			//ui->ResponsePreview->setUpdatesEnabled(false);
-   //         ui->ResponsePreview->setHtml(htmlContent);
-			//ui->ResponsePreview->setUpdatesEnabled(true);
+            if (!m_webView)
+                if (ui->HtmlPreviewRB->isChecked()) {
+					m_webView = new QWebEngineView(ui->ResponsePreview);
+					ui->ReplyStack->addWidget(m_webView);
+                }
+
+            if (m_webView) {
+				ui->ReplyStack->setCurrentWidget(m_webView);
+                m_webView->setHtml(htmlContent, ui->RequestURL->text());
+            }
+            else {
+				// delay creation of webview until firstHtmlPreviewRB use
+				m_cachedHtml = htmlContent;
+				m_cachedUrl = ui->RequestURL->text();
+            }
         }
 
 		UpdateHtmlReply();

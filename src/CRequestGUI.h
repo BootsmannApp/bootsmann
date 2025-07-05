@@ -126,6 +126,8 @@ private:
 
 	QString m_fileNameToUpload;
 	QFile m_fileToUpload;
+
+	QString m_cachedHtml, m_cachedUrl;
 };
 
 #endif // CREQUESTGUI_H

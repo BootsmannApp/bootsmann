@@ -20,8 +20,10 @@ public:
     ~CWorkspaceGUI();
 
 	int CreateNewRequest() { return AddRequestTab(); }
-	bool SaveCurrentRequest();
-	bool LoadRequest();
+    int CloneCurrentRequest();
+    bool SaveCurrentRequest();
+
+	bool LoadRequest(); // to do: return index
 	bool HasRequests() const; 
 
 	bool SaveWorkspace();
@@ -31,12 +33,14 @@ public:
     bool Restore(QSettings& settings);
 
 protected:
-    int AddRequestTab();
+    int AddRequestTab(int tabIndex = -1);
     CRequestGUI* GetCurrentRequest();
     CRequestGUI* GetRequest(int tabIndex);
 
 private Q_SLOTS:
     void CloseRequestTab(int index);
+
+	void on_Tabs_customContextMenuRequested(const QPoint& pos);
 
 private:
     Ui::CWorkspaceGUI *ui;

@@ -6,6 +6,8 @@
 #include <QTabBar>
 #include <QToolButton>
 #include <QFileDialog>
+#include <QMenu>
+#include <QTemporaryFile>
 
 
 const int INFO_TAB_INDEX = 0;
@@ -43,6 +45,9 @@ CWorkspaceGUI::CWorkspaceGUI(CRequestManager& reqMgr, QWidget *parent)
 
     // handle closing tabs
     connect(ui->Tabs->tabBar(), &QTabBar::tabCloseRequested, this, &CWorkspaceGUI::CloseRequestTab);
+
+	// tabs context menu
+	ui->Tabs->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // add default request
     AddRequestTab();
@@ -142,6 +147,32 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
 }
 
 
+int CWorkspaceGUI::CloneCurrentRequest()
+{
+    auto requestUI = GetCurrentRequest();
+    if (!requestUI)
+		return -1;  // no current request
+
+    QTemporaryFile tempIni;
+    tempIni.open();  // Creates a temp file
+    QSettings settings(tempIni.fileName(), QSettings::IniFormat);
+	requestUI->Store(settings);
+	settings.sync();  // Ensure all data is written
+
+	int newTabIndex = AddRequestTab(ui->Tabs->currentIndex() + 1);
+	ui->Tabs->setCurrentIndex(newTabIndex);
+
+	auto newRequestUI = GetCurrentRequest();
+    if (!newRequestUI)
+        return -1;  // no current request
+
+	newRequestUI->Restore(settings);
+	newRequestUI->Init();
+
+    return newTabIndex;
+}
+
+
 bool CWorkspaceGUI::SaveCurrentRequest()
 {
 	auto currentTab = ui->Tabs->currentWidget();
@@ -234,40 +265,57 @@ CRequestGUI* CWorkspaceGUI::GetRequest(int tabIndex)
 }
 
 
-int CWorkspaceGUI::AddRequestTab()
+int CWorkspaceGUI::AddRequestTab(int tabIndex)
 {
     auto requestUI = new CRequestGUI(m_reqMgr, this);
-    int index = ui->Tabs->addTab(requestUI, tr("New Request"));
-    ui->Tabs->setCurrentIndex(index);
+
+    if (tabIndex >= 0 && tabIndex < ui->Tabs->count()) {
+        // insert at specified index
+        ui->Tabs->insertTab(tabIndex, requestUI, tr("New Request"));
+    }
+    else
+    tabIndex = ui->Tabs->addTab(requestUI, tr("New Request"));
+    
+    ui->Tabs->setCurrentIndex(tabIndex);
     requestUI->Init();
 
     connect(requestUI, &CRequestGUI::RequestTitleChanged, this, [=](const QString& title){
-		ui->Tabs->setTabToolTip(index, title);
+        int tabIndex = ui->Tabs->indexOf(requestUI);
+        
+        ui->Tabs->setTabToolTip(tabIndex, title);
 
         // truncate long titles
         if (title.size() > 20)
-            ui->Tabs->setTabText(index, title.left(20) + "..."); 
+            ui->Tabs->setTabText(tabIndex, title.left(20) + "...");
         else
-		    ui->Tabs->setTabText(index, title);
+		    ui->Tabs->setTabText(tabIndex, title);
 	});
 
     connect(requestUI, &CRequestGUI::RequestFailed, this, [=](){
-        ui->Tabs->tabBar()->setTabTextColor(index, Qt::red);
+		int tabIndex = ui->Tabs->indexOf(requestUI);
+
+        ui->Tabs->tabBar()->setTabTextColor(tabIndex, Qt::red);
 	});
 
     connect(requestUI, &CRequestGUI::RequestDone, this, [=](){
-		ui->Tabs->tabBar()->setTabTextColor(index, Qt::darkGreen);
+        int tabIndex = ui->Tabs->indexOf(requestUI);
+        
+        ui->Tabs->tabBar()->setTabTextColor(tabIndex, Qt::darkGreen);
     });
 
     connect(requestUI, &CRequestGUI::RequestCleared, this, [=]() {
-        ui->Tabs->tabBar()->setTabTextColor(index, Qt::black);
+        int tabIndex = ui->Tabs->indexOf(requestUI);
+
+        ui->Tabs->tabBar()->setTabTextColor(tabIndex, Qt::black);
     });
 
     connect(requestUI, &CRequestGUI::RequestStarted, this, [=]() {
-        ui->Tabs->tabBar()->setTabTextColor(index, Qt::gray);
+        int tabIndex = ui->Tabs->indexOf(requestUI);
+
+        ui->Tabs->tabBar()->setTabTextColor(tabIndex, Qt::gray);
     });
 
-    return index;
+    return tabIndex;
 }
 
 
@@ -277,3 +325,60 @@ void CWorkspaceGUI::CloseRequestTab(int index)
     ui->Tabs->removeTab(index);
     pageUI->deleteLater();
 }
+
+
+// privates
+
+void CWorkspaceGUI::on_Tabs_customContextMenuRequested(const QPoint& pos)
+{
+    int tabIndex = ui->Tabs->tabBar()->tabAt(pos);
+    if (tabIndex == -1)
+		return;     // means no tab at this position
+
+	// if INFO or LOG tab, do not show context menu
+    if (tabIndex == INFO_TAB_INDEX || tabIndex == LOG_TAB_INDEX)
+        return;
+
+	// set clicked tab as current
+	ui->Tabs->setCurrentIndex(tabIndex);
+
+    QMenu contextMenu(this);
+    contextMenu.addAction(tr("New Request"), this, [this]() {
+        int currentIndex = ui->Tabs->currentIndex();
+		AddRequestTab(currentIndex + 1);    // next after current
+    });
+
+    contextMenu.addAction(tr("Duplicate Request"), this, [this]() {
+        //int currentIndex = ui->Tabs->currentIndex();
+		CloneCurrentRequest();
+    });
+
+    //contextMenu.addAction(tr("Load Request..."), this, [this]() {
+    //    LoadRequest();
+    //});
+
+    contextMenu.addAction(tr("Save Request"), this, [this]() {
+        SaveCurrentRequest();
+    });
+
+    contextMenu.addSeparator();
+
+    contextMenu.addAction(tr("Close Request"), this, [this]() {
+        int currentIndex = ui->Tabs->currentIndex();
+        CloseRequestTab(currentIndex);
+    });
+
+    contextMenu.addAction(tr("Close Other Requests"), this, [this]() {
+        int currentIndex = ui->Tabs->currentIndex();
+        for (int i = ui->Tabs->count() - 1; i >= 0; --i) {
+            if (i != currentIndex && i > 1) { // keep INFO and LOG tabs
+                CloseRequestTab(i);
+            }
+        }
+	});
+
+
+    contextMenu.exec(ui->Tabs->mapToGlobal(pos));
+}
+
+
