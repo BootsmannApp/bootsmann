@@ -37,14 +37,19 @@ public Q_SLOTS:
 	void on_actionSaveRequest_triggered();
 	void on_actionLoadRequest_triggered();
 
+	void on_actionNewWorkspace_triggered();
 	void on_actionSaveWorkspace_triggered();
 	void on_actionLoadWorkspace_triggered();
 	void on_actionCloseWorkspace_triggered();
+	void on_actionRenameWorkspace_triggered();
 
 private Q_SLOTS:
 	void OnQuitApplication();
 
 private:
+	void CreateDefaultWorkspace();
+	void UpdateTitle();
+
     Ui::CMainGUI *ui = nullptr;
 	CRequestManager m_reqMgr;
 	CWorkspaceGUI* m_activeWorkspace = nullptr;

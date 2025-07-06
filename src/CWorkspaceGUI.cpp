@@ -7,6 +7,7 @@
 #include <QToolButton>
 #include <QFileDialog>
 #include <QMenu>
+#include <QMessageBox>
 #include <QTemporaryFile>
 
 
@@ -64,6 +65,9 @@ bool CWorkspaceGUI::Store(QSettings& settings) const
 {
     settings.beginGroup("Workspace");
 
+    // save name
+    settings.setValue("Name", m_name);
+
 	// save the last used paths
 	settings.setValue("LastLoadPath", m_lastLoadPath);
 	settings.setValue("LastSavePath", m_lastSavePath);
@@ -108,6 +112,9 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
 	}
 
     settings.beginGroup("Workspace");
+
+    // restore name
+    m_name = settings.value("Name").toString();
 
 	// restore the last used paths
 	m_lastLoadPath = settings.value("LastLoadPath", m_lastLoadPath).toString();
@@ -226,11 +233,17 @@ bool CWorkspaceGUI::HasRequests() const
 
 bool CWorkspaceGUI::SaveWorkspace()
 {
-    QString savePath = QFileDialog::getSaveFileName(this, tr("Save Workspace"), m_lastSavePath, tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+    QString savePath = QFileDialog::getSaveFileName(this, tr("Save Workspace"), m_filePath,
+        tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+
     if (savePath.isEmpty())
         return false;
 
-    m_lastSavePath = QFileInfo(savePath).absolutePath();
+    m_filePath = savePath;
+
+	// Generate name from file name if not set
+    if (m_name.isEmpty())
+		m_name = QFileInfo(savePath).baseName();
 
     QSettings settings(savePath, QSettings::IniFormat);
     return this->Store(settings);
@@ -239,14 +252,28 @@ bool CWorkspaceGUI::SaveWorkspace()
 
 bool CWorkspaceGUI::LoadWorkspace()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Workspace"), m_lastLoadPath, tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Workspace"), m_filePath,
+        tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
+
     if (filePath.isEmpty())
         return false;
 
-    m_lastLoadPath = QFileInfo(filePath).absolutePath();
+    // store current workspace
+    StoreSession();
+
+    m_filePath = filePath;
 
     QSettings settings(filePath, QSettings::IniFormat);
     return this->Restore(settings);
+}
+
+
+void CWorkspaceGUI::StoreSession()
+{
+    if (m_filePath.size()) {
+        QSettings settings(m_filePath, QSettings::IniFormat);
+        this->Store(settings);
+    }
 }
 
 
@@ -369,6 +396,14 @@ void CWorkspaceGUI::on_Tabs_customContextMenuRequested(const QPoint& pos)
     });
 
     contextMenu.addAction(tr("Close Other Requests"), this, [this]() {
+        int openRequestCount = ui->Tabs->count() - 2 - 1;
+        int btn = QMessageBox::question(this, tr("Close Requests"),
+            tr("%1 requests are about to close, continue?").arg(openRequestCount),
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+        if (btn == QMessageBox::No)
+            return;
+
         int currentIndex = ui->Tabs->currentIndex();
         for (int i = ui->Tabs->count() - 1; i >= 0; --i) {
             if (i != currentIndex && i > 1) { // keep INFO and LOG tabs

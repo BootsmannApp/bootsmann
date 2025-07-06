@@ -31,9 +31,11 @@
     <addaction name="actionLoadRequest"/>
     <addaction name="actionSaveRequest"/>
     <addaction name="separator"/>
-    <addaction name="actionCloseWorkspace"/>
+    <addaction name="actionNewWorkspace"/>
     <addaction name="actionLoadWorkspace"/>
     <addaction name="actionSaveWorkspace"/>
+    <addaction name="actionRenameWorkspace"/>
+    <addaction name="actionCloseWorkspace"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -158,6 +160,32 @@
    </property>
    <property name="toolTip">
     <string>Save current workspace and its parameters to a file</string>
+   </property>
+  </action>
+  <action name="actionNewWorkspace">
+   <property name="icon">
+    <iconset resource="Bootsmann.qrc">
+     <normaloff>:/Icons/Add</normaloff>:/Icons/Add</iconset>
+   </property>
+   <property name="text">
+    <string>New Workspace...</string>
+   </property>
+   <property name="toolTip">
+    <string>Create empty workspace</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionRenameWorkspace">
+   <property name="text">
+    <string>Rename Workspace...</string>
+   </property>
+   <property name="toolTip">
+    <string>Rename current workspace</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

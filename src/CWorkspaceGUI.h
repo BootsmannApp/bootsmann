@@ -28,6 +28,12 @@ public:
 
 	bool SaveWorkspace();
 	bool LoadWorkspace();
+	void StoreSession();    // store current workspace to last used path
+
+	const QString& GetName() const { return m_name; }
+	void SetName(const QString& name) { m_name = name; }
+
+	bool IsDefault() const { return m_name.isEmpty() && m_filePath.isEmpty(); }
 
     bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
@@ -49,6 +55,10 @@ private:
 
 	QString m_lastLoadPath;
 	QString m_lastSavePath;
+
+    QString m_filePath;
+
+    QString m_name;
 };
 
 #endif // CWORKSPACEGUI_H

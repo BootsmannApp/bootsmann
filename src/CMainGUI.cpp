@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QStandardPaths>
 
 
@@ -40,16 +41,11 @@ CMainGUI::CMainGUI(QWidget *parent)
 
     // init
 	qApp->setApplicationDisplayName(qApp->applicationName() + " " + qApp->applicationVersion());
-    setWindowTitle(tr("Default Workspace"));
 
     connect(qApp, &QApplication::aboutToQuit, this, &CMainGUI::OnQuitApplication);
 
-    // add default request manager
-    // auto reqMgr = new CRequestManager(this);
-
-    // add default workspace
-    m_activeWorkspace = new CWorkspaceGUI(m_reqMgr, this);
-	setCentralWidget(m_activeWorkspace);
+	// create default workspace
+    CreateDefaultWorkspace();
 }
 
 
@@ -58,6 +54,38 @@ CMainGUI::~CMainGUI()
     delete ui;
 }
 
+
+// private
+
+void CMainGUI::CreateDefaultWorkspace()
+{
+    setCentralWidget(nullptr);
+
+    if (m_activeWorkspace)
+        delete m_activeWorkspace;
+
+    m_activeWorkspace = new CWorkspaceGUI(m_reqMgr, this);
+    setCentralWidget(m_activeWorkspace);
+
+    UpdateTitle();
+}
+
+
+void CMainGUI::UpdateTitle()
+{
+    if (m_activeWorkspace) {
+        if (m_activeWorkspace->IsDefault()) {
+            setWindowTitle(tr("<Default Workspace>"));
+        } else {
+            setWindowTitle(m_activeWorkspace->GetName());
+		}
+    } else {
+        setWindowTitle(tr("<No Workspace>"));
+	}
+}
+
+
+// slots
 
 void CMainGUI::OnQuitApplication()
 {
@@ -140,6 +168,22 @@ void CMainGUI::on_actionLoadRequest_triggered()
 }
 
 
+void CMainGUI::on_actionNewWorkspace_triggered()
+{
+	// store current workspace
+    m_activeWorkspace->StoreSession();
+
+	// reset active workspace
+    CreateDefaultWorkspace();
+
+	// save with new name
+    m_activeWorkspace->SaveWorkspace();
+    
+	// set title
+    UpdateTitle();
+}
+
+
 void CMainGUI::on_actionSaveWorkspace_triggered()
 {
 	m_activeWorkspace->SaveWorkspace();
@@ -148,26 +192,57 @@ void CMainGUI::on_actionSaveWorkspace_triggered()
 
 void CMainGUI::on_actionLoadWorkspace_triggered()
 {
-	m_activeWorkspace->LoadWorkspace();
+	if (m_activeWorkspace->LoadWorkspace())
+    {
+		UpdateTitle();
+    }
 }
 
 
 void CMainGUI::on_actionCloseWorkspace_triggered()
 {
-    if (m_activeWorkspace) {
-        if (m_activeWorkspace->HasRequests()) {
-            QMessageBox::StandardButton reply = QMessageBox::question(this, tr("Close Workspace"),
-                tr("Are you sure you want to close the current workspace? Any unsaved changes will be lost."),
-                QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
-            if (reply != QMessageBox::Yes) {
-                return; // user chose not to close
-            }
-		}
+    // store current workspace
+	m_activeWorkspace->StoreSession();
+
+    // load default workspace
+    QString fileName = GetConfigFileName();
+    QSettings settings(fileName, QSettings::IniFormat);
+    m_activeWorkspace->Restore(settings);
+
+    UpdateTitle();
+}
+
+
+void CMainGUI::on_actionRenameWorkspace_triggered()
+{
+    if (!m_activeWorkspace) {
+        QMessageBox::warning(this, tr("Rename Workspace"), tr("No active workspace to rename."));
+        return;
 	}
 
-    // create a new default workspace
-    m_activeWorkspace = new CWorkspaceGUI(m_reqMgr, this);
-    setCentralWidget(m_activeWorkspace);
+	bool isDefault = m_activeWorkspace->IsDefault();
+    if (isDefault) {
+        QMessageBox::warning(this, tr("Rename Workspace"), tr("Cannot rename the default workspace."));
+        return;
+    }
+
+    QString newName = QInputDialog::getText(
+        this, tr("Rename Workspace"),
+        tr("Enter new workspace name:"), QLineEdit::Normal,
+		m_activeWorkspace->GetName());
+
+    if (newName.isEmpty()) {
+        //QMessageBox::warning(this, tr("Rename Workspace"), tr("Workspace name cannot be empty."));
+        return;
+    }
+
+    // set new name
+    m_activeWorkspace->SetName(newName);
+    
+    UpdateTitle();
+
+    // store session with new name
+	m_activeWorkspace->StoreSession();
 }
 
 
@@ -185,7 +260,15 @@ void CMainGUI::StoreSession()
 	QSettings settings(fileName, QSettings::IniFormat);
 
     // current workspace
-    m_activeWorkspace->Store(settings);
+    if (m_activeWorkspace) {
+        if (!m_activeWorkspace->GetName().isEmpty()) {
+			// user-defined workspace
+            m_activeWorkspace->StoreSession();
+        } else {
+			// default workspace
+            m_activeWorkspace->Store(settings);
+        }
+    }
 
 	// geometry and state
     settings.beginGroup("Window");
@@ -213,7 +296,7 @@ void CMainGUI::RestoreSession()
 	bool maximized = settings.value("Maximized", true).toBool();
     settings.endGroup();
 
-    // restore current workspace
+    // restore default workspace
     m_activeWorkspace->Restore(settings);
     
     // restore other settings if needed
