@@ -2,7 +2,7 @@
 A minimalistic, lean and fast HTTP REST API test application (opensource C++ alternative to Postman/Insomnia/Hoppscotch for simple HTTP REST API testing).
 It is especially useful for embedded devices and local development, where low memory usage and fast response times are crucial.
 
-![image](https://github.com/user-attachments/assets/a1f042e7-9da4-4321-bbbe-0adbba0fafdd)
+![image](https://github.com/user-attachments/assets/9f43498b-016d-4178-962f-4eae6ed43bef)
 
 ## Key Features
 - **Lean**: Designed to be lightweight - low memory footprint and resource usage.
@@ -15,12 +15,19 @@ It is especially useful for embedded devices and local development, where low me
 - **Intuitive**: Provides a simple (but functional) graphical user interface.
 - **Open source**: Available under the MIT License, allowing for free use, modification, and distribution.
 
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b2a53b30-249e-4b5b-bd82-32bfbc65fe14" alt="HTTP" width="100">
+<img src="https://github.com/user-attachments/assets/83787c03-e304-44cd-ba78-6a07ebe14c1f" alt="C++" width="100">
+<img src="https://github.com/user-attachments/assets/22eb374a-8e25-4265-954d-e86a0e415578" alt="Qt" width="100">
+</p>
+
 ## Core Functionality
 - Building and executing HTTP requests visually
-- Parsing and visualising server replies in a human-convenient form
-- Basic user authentification (Unencrypted, Bearer token)
 - Visual editing of parameters and headers
 - Common file and clipboard operations
+- Basic user authentification (Unencrypted, Basic, Bearer token)
+- Parsing and visualising server replies in a human-convenient form
+- Dynamic loading of HTML replies
 
 ## Measurements
 
@@ -35,6 +42,6 @@ It is especially useful for embedded devices and local development, where low me
 Since **Bootsmann** is a free software, it is developed in my spare time entirely at my own expense.
 If you like the software, you can support its development by making a donation (one-time or monthly) via the button below:
 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z35EHHJ3729GG&source=url)
+  [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z35EHHJ3729GG&source=url)
 
 Thank you!
