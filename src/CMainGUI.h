@@ -22,7 +22,7 @@ public:
     explicit CMainGUI(QWidget *parent = nullptr);
     ~CMainGUI();
 
-	QString GetConfigFileName() const;
+	QString GetDefaultWorkspaceFileName() const;
 	void StoreSession();
 	void RestoreSession();
 

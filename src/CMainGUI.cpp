@@ -204,11 +204,15 @@ void CMainGUI::on_actionCloseWorkspace_triggered()
     // store current workspace
 	m_activeWorkspace->StoreSession();
 
+    // reset active workspace
+    CreateDefaultWorkspace();
+
     // load default workspace
-    QString fileName = GetConfigFileName();
+    QString fileName = GetDefaultWorkspaceFileName();
     QSettings settings(fileName, QSettings::IniFormat);
     m_activeWorkspace->Restore(settings);
 
+    // set title
     UpdateTitle();
 }
 
@@ -248,15 +252,15 @@ void CMainGUI::on_actionRenameWorkspace_triggered()
 
 // IO Session stuff
 
-QString CMainGUI::GetConfigFileName() const
+QString CMainGUI::GetDefaultWorkspaceFileName() const
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/session.ini";
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/Default.bow";
 }
 
 
 void CMainGUI::StoreSession()
 {
-    QString fileName = GetConfigFileName();
+    QString fileName = GetDefaultWorkspaceFileName();
 	QSettings settings(fileName, QSettings::IniFormat);
 
     // current workspace
@@ -286,7 +290,7 @@ void CMainGUI::StoreSession()
 
 void CMainGUI::RestoreSession()
 {
-    QString fileName = GetConfigFileName();
+    QString fileName = GetDefaultWorkspaceFileName();
     QSettings settings(fileName, QSettings::IniFormat);
 
 	// restore geometry and state

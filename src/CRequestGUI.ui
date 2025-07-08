@@ -767,7 +767,7 @@
                   <item>
                    <widget class="QRadioButton" name="HtmlAsTextRB">
                     <property name="text">
-                     <string>Text</string>
+                     <string>Source</string>
                     </property>
                     <property name="checked">
                      <bool>true</bool>

@@ -55,6 +55,20 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 	// highlighters
     m_requestHL = new QSourceHighlite::QSourceHighliter(nullptr);
     m_replyHL = new QSourceHighlite::QSourceHighliter(nullptr);
+
+    // request types
+    ui->RequestType->setItemData(0, QColor("#00cdac"), Qt::ForegroundRole);     // GET
+    ui->RequestType->setItemData(1, QColor("#00a5e3"), Qt::ForegroundRole);     // PUT
+    ui->RequestType->setItemData(2, QColor("#ffbf65"), Qt::ForegroundRole);     // POST
+	ui->RequestType->setItemData(3, QColor("#ff6f61"), Qt::ForegroundRole);     // DELETE
+    ui->RequestType->setItemData(4, QColor("#ff00ff"), Qt::ForegroundRole);     // HEAD
+    ui->RequestType->setItemData(5, QColor("#ac75f0"), Qt::ForegroundRole);     // OPTIONS
+    ui->RequestType->setItemData(6, QColor("#ff5f1f"), Qt::ForegroundRole);     // PATCH
+	ui->RequestType->setItemData(7, QColor("#a0a0a0"), Qt::ForegroundRole);     // TRACE
+    ui->RequestType->setItemData(8, QColor("#5f00ff"), Qt::ForegroundRole);     // CONNECT
+	ui->RequestType->setItemData(9, QColor("#a0a0f0"), Qt::ForegroundRole);     // LIST
+
+    UpdateRequestType();
 }
 
 
@@ -173,8 +187,9 @@ bool CRequestGUI::Restore(QSettings& settings)
     ui->AuthPassword->blockSignals(false);
     ui->AuthUser->blockSignals(false);
 
-    // title
+    // title & colors
     UpdateTabTitle();
+	UpdateRequestType();
 
     return true;
 }
@@ -386,6 +401,7 @@ void CRequestGUI::on_RequestURL_editingFinished()
 void CRequestGUI::on_RequestType_currentIndexChanged(int /*index*/)
 {
     UpdateTabTitle();
+	UpdateRequestType();
 }
 
 
@@ -557,26 +573,26 @@ void CRequestGUI::RebuildURL()
         }
         targetUrl.setQuery(queryParts.join("&")); // Set new query parameters
 	}
-    else
-		targetUrl.setQuery(""); // Clear query if no parameters
+  //  else
+		//targetUrl.setQuery(""); // Clear query if no parameters
 
     // update login:password
     if (ui->AuthType->currentIndex() == 0) { // No authentication
-        targetUrl.setUserInfo(""); // Clear user info
+        //targetUrl.setUserInfo(""); // Clear user info
     } 
     else if (ui->AuthType->currentIndex() == 1) { // Unencrypted authentication
         QString login = ui->AuthUser->text().trimmed();
         QString password = ui->AuthPassword->text().trimmed();
 
         if (login.isEmpty() && password.isEmpty()) {
-            targetUrl.setUserInfo(""); // Clear user info
+            //targetUrl.setUserInfo(""); // Clear user info
         } else {
             targetUrl.setUserName(login);
             targetUrl.setPassword(password);
 		}
     }
     else if (ui->AuthType->currentIndex() == 2) { // Bearer token authentication
-        targetUrl.setUserInfo(""); // Clear user info
+        //targetUrl.setUserInfo(""); // Clear user info
 
         QString token = ui->AuthToken->text().trimmed();
         if (!token.isEmpty()) {
@@ -586,7 +602,7 @@ void CRequestGUI::RebuildURL()
         }
     }
     else if (ui->AuthType->currentIndex() == 3) { // Basic authentication
-        targetUrl.setUserInfo(""); // Clear user info
+        //targetUrl.setUserInfo(""); // Clear user info
         
         QString login = ui->AuthUser->text().trimmed();
         QString password = ui->AuthPassword->text().trimmed();
@@ -616,6 +632,14 @@ void CRequestGUI::UpdateTabTitle()
     QString verb = ui->RequestType->currentText();
     QString requestTitle = verb + " " + ui->RequestURL->text().trimmed();
     Q_EMIT RequestTitleChanged(requestTitle);
+}
+
+
+void CRequestGUI::UpdateRequestType()
+{
+	int index = ui->RequestType->currentIndex();
+    auto color = ui->RequestType->itemData(index, Qt::ForegroundRole).toString();
+    ui->RequestType->setStyleSheet("color: " + color + ";");
 }
 
 

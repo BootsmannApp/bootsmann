@@ -91,6 +91,7 @@ private:
 
     void RebuildURL();
     void UpdateTabTitle();
+    void UpdateRequestType();
 
 	void DecodeReply(QNetworkReply* reply, const QByteArray& data);
 

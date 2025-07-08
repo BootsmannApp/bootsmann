@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QTemporaryFile>
+#include <QStandardPaths>
 
 
 const int INFO_TAB_INDEX = 0;
@@ -233,7 +234,11 @@ bool CWorkspaceGUI::HasRequests() const
 
 bool CWorkspaceGUI::SaveWorkspace()
 {
-    QString savePath = QFileDialog::getSaveFileName(this, tr("Save Workspace"), m_filePath,
+    QString defaultPath = m_filePath.isEmpty() ?
+        QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) :
+        m_filePath;
+
+    QString savePath = QFileDialog::getSaveFileName(this, tr("Save Workspace"), defaultPath,
         tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
 
     if (savePath.isEmpty())
@@ -252,7 +257,11 @@ bool CWorkspaceGUI::SaveWorkspace()
 
 bool CWorkspaceGUI::LoadWorkspace()
 {
-    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Workspace"), m_filePath,
+    QString defaultPath = m_filePath.isEmpty() ?
+        QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) :
+        m_filePath;
+
+    QString filePath = QFileDialog::getOpenFileName(this, tr("Load Workspace"), defaultPath,
         tr("Bootsmann Workspaces (*.bow);;All Files (*)"));
 
     if (filePath.isEmpty())
