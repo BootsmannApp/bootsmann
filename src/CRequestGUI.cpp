@@ -57,13 +57,13 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
     m_replyHL = new QSourceHighlite::QSourceHighliter(nullptr);
 
     // request types
-    ui->RequestType->setItemData(0, QColor("#00cdac"), Qt::ForegroundRole);     // GET
-    ui->RequestType->setItemData(1, QColor("#00a5e3"), Qt::ForegroundRole);     // PUT
-    ui->RequestType->setItemData(2, QColor("#ffbf65"), Qt::ForegroundRole);     // POST
+    ui->RequestType->setItemData(0, QColor("#00a5e3"), Qt::ForegroundRole);     // GET
+    ui->RequestType->setItemData(1, QColor("#ff5f1f"), Qt::ForegroundRole);     // PUT
+    ui->RequestType->setItemData(2, QColor("#00cdac"), Qt::ForegroundRole);     // POST
 	ui->RequestType->setItemData(3, QColor("#ff6f61"), Qt::ForegroundRole);     // DELETE
     ui->RequestType->setItemData(4, QColor("#ff00ff"), Qt::ForegroundRole);     // HEAD
-    ui->RequestType->setItemData(5, QColor("#ac75f0"), Qt::ForegroundRole);     // OPTIONS
-    ui->RequestType->setItemData(6, QColor("#ff5f1f"), Qt::ForegroundRole);     // PATCH
+    ui->RequestType->setItemData(5, QColor("#40e0d0"), Qt::ForegroundRole);     // OPTIONS
+    ui->RequestType->setItemData(6, QColor("#ac75f0"), Qt::ForegroundRole);     // PATCH
 	ui->RequestType->setItemData(7, QColor("#a0a0a0"), Qt::ForegroundRole);     // TRACE
     ui->RequestType->setItemData(8, QColor("#5f00ff"), Qt::ForegroundRole);     // CONNECT
 	ui->RequestType->setItemData(9, QColor("#a0a0f0"), Qt::ForegroundRole);     // LIST
