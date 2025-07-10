@@ -144,7 +144,7 @@
        <item>
         <widget class="QTabWidget" name="RequestTabs">
          <property name="currentIndex">
-          <number>3</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="RequestBodyTab">
           <attribute name="title">
@@ -249,6 +249,9 @@
             <widget class="QPlainTextEdit" name="RequestBody">
              <property name="readOnly">
               <bool>false</bool>
+             </property>
+             <property name="tabStopDistance">
+              <double>20.000000000000000</double>
              </property>
              <property name="placeholderText">
               <string>&lt;Put request body here&gt;</string>

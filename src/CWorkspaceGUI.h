@@ -23,6 +23,8 @@ public:
     int CloneCurrentRequest();
     bool SaveCurrentRequest();
 
+    bool RebaseCurrentRequest();
+
 	bool LoadRequest(); // to do: return index
 	bool HasRequests() const; 
 

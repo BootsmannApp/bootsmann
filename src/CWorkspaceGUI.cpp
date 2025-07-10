@@ -6,8 +6,9 @@
 #include <QTabBar>
 #include <QToolButton>
 #include <QFileDialog>
-#include <QMenu>
+#include <QInputDialog>
 #include <QMessageBox>
+#include <QMenu>
 #include <QTemporaryFile>
 #include <QStandardPaths>
 
@@ -183,13 +184,9 @@ int CWorkspaceGUI::CloneCurrentRequest()
 
 bool CWorkspaceGUI::SaveCurrentRequest()
 {
-	auto currentTab = ui->Tabs->currentWidget();
-	if (!currentTab)
-        return false;
-
-	auto requestUI = dynamic_cast<CRequestGUI*>(currentTab);
+    auto requestUI = GetCurrentRequest();
     if (!requestUI)
-		return false;
+        return false;  // no current request
 
 	QString savePath = QFileDialog::getSaveFileName(this, tr("Save Request"), m_lastSavePath, tr("Bootsmann Requests (*.bor);;All Files (*)"));
 	if (savePath.isEmpty())
@@ -199,6 +196,30 @@ bool CWorkspaceGUI::SaveCurrentRequest()
 
 	QSettings settings(savePath, QSettings::IniFormat);
 	return requestUI->Store(settings);
+}
+
+
+bool CWorkspaceGUI::RebaseCurrentRequest()
+{
+    auto requestUI = GetCurrentRequest();
+    if (!requestUI)
+        return false;  // no current request
+
+	QString currentUrl = QUrl(requestUI->GetRequestUrl())
+        .adjusted(QUrl::RemovePath | QUrl::RemoveUserInfo | QUrl::RemoveQuery | QUrl::RemoveFragment | QUrl::StripTrailingSlash | QUrl::NormalizePathSegments)
+        .toString();
+
+	QString newUrl = QInputDialog::getText(this, tr("Rebase Request"), 
+        tr("Enter new URL for the request:"), QLineEdit::Normal, 
+        currentUrl);
+
+    if (newUrl.isEmpty())
+		return false;  // user canceled
+
+	// set new URL
+	//requestUI->SetRequestUrl(newUrl);
+
+    return false;
 }
 
 
@@ -393,8 +414,14 @@ void CWorkspaceGUI::on_Tabs_customContextMenuRequested(const QPoint& pos)
     //    LoadRequest();
     //});
 
-    contextMenu.addAction(tr("Save Request"), this, [this]() {
+    contextMenu.addAction(tr("Save Request..."), this, [this]() {
         SaveCurrentRequest();
+    });
+
+    contextMenu.addSeparator();
+
+    contextMenu.addAction(tr("Rebase Request..."), this, [this]() {
+        RebaseCurrentRequest();
     });
 
     contextMenu.addSeparator();

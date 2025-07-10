@@ -31,11 +31,6 @@
     <addaction name="actionLoadRequest"/>
     <addaction name="actionSaveRequest"/>
     <addaction name="separator"/>
-    <addaction name="actionNewWorkspace"/>
-    <addaction name="actionLoadWorkspace"/>
-    <addaction name="actionSaveWorkspace"/>
-    <addaction name="actionRenameWorkspace"/>
-    <addaction name="actionCloseWorkspace"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -48,7 +43,24 @@
     <addaction name="separator"/>
     <addaction name="actionDonate"/>
    </widget>
+   <widget class="QMenu" name="menuWorkspace">
+    <property name="title">
+     <string>Workspace</string>
+    </property>
+    <addaction name="actionNewWorkspace"/>
+    <addaction name="actionRenameWorkspace"/>
+    <addaction name="actionLoadWorkspace"/>
+    <addaction name="actionSaveWorkspace"/>
+    <addaction name="actionCloseWorkspace"/>
+   </widget>
+   <widget class="QMenu" name="menuBookmarks">
+    <property name="title">
+     <string>Bookmarks</string>
+    </property>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuWorkspace"/>
+   <addaction name="menuBookmarks"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

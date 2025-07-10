@@ -31,6 +31,8 @@ public:
     void Init();
     bool IsDefault() const;
 
+    QString GetRequestUrl() const;
+
 	bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
 
