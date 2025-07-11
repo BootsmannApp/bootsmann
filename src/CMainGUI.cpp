@@ -173,6 +173,12 @@ void CMainGUI::on_actionLoadRequest_triggered()
 }
 
 
+void CMainGUI::on_actionRebaseRequest_triggered()
+{
+    m_activeWorkspace->RebaseCurrentRequest();
+}
+
+
 void CMainGUI::on_actionNewWorkspace_triggered()
 {
 	// store current workspace
@@ -213,7 +219,7 @@ void CMainGUI::on_actionCloseWorkspace_triggered()
     CreateDefaultWorkspace();
 
     // load default workspace
-    QString fileName = GetDefaultWorkspaceFileName();
+    QString fileName = CWorkspaceGUI::GetDefaultWorkspaceFileName();
     QSettings settings(fileName, QSettings::IniFormat);
     m_activeWorkspace->Restore(settings);
 
@@ -255,17 +261,23 @@ void CMainGUI::on_actionRenameWorkspace_triggered()
 }
 
 
-// IO Session stuff
-
-QString CMainGUI::GetDefaultWorkspaceFileName() const
+void CMainGUI::on_actionRebaseWorkspace_triggered()
 {
-    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/Default.bow";
+    m_activeWorkspace->RebaseOpenRequests();
 }
 
 
+void CMainGUI::on_actionAddBookmark_triggered()
+{
+    m_activeWorkspace->BookmarkCurrentRequest();
+}
+
+
+// IO Session stuff
+
 void CMainGUI::StoreSession()
 {
-    QString fileName = GetDefaultWorkspaceFileName();
+    QString fileName = CWorkspaceGUI::GetDefaultWorkspaceFileName();
 	QSettings settings(fileName, QSettings::IniFormat);
 
     // current workspace
@@ -295,7 +307,7 @@ void CMainGUI::StoreSession()
 
 void CMainGUI::RestoreSession()
 {
-    QString fileName = GetDefaultWorkspaceFileName();
+    QString fileName = CWorkspaceGUI::GetDefaultWorkspaceFileName();
     QSettings settings(fileName, QSettings::IniFormat);
 
 	// restore geometry and state

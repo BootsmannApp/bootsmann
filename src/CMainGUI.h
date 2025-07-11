@@ -22,7 +22,6 @@ public:
     explicit CMainGUI(QWidget *parent = nullptr);
     ~CMainGUI();
 
-	QString GetDefaultWorkspaceFileName() const;
 	void StoreSession();
 	void RestoreSession();
 
@@ -36,12 +35,16 @@ public Q_SLOTS:
 	void on_actionNewRequest_triggered();
 	void on_actionSaveRequest_triggered();
 	void on_actionLoadRequest_triggered();
+	void on_actionRebaseRequest_triggered();
 
 	void on_actionNewWorkspace_triggered();
 	void on_actionSaveWorkspace_triggered();
 	void on_actionLoadWorkspace_triggered();
 	void on_actionCloseWorkspace_triggered();
 	void on_actionRenameWorkspace_triggered();
+	void on_actionRebaseWorkspace_triggered();
+
+	void on_actionAddBookmark_triggered();
 
 private Q_SLOTS:
 	void OnQuitApplication();

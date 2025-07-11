@@ -31,6 +31,7 @@
     <addaction name="actionLoadRequest"/>
     <addaction name="actionSaveRequest"/>
     <addaction name="separator"/>
+    <addaction name="actionRebaseRequest"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -49,6 +50,7 @@
     </property>
     <addaction name="actionNewWorkspace"/>
     <addaction name="actionRenameWorkspace"/>
+    <addaction name="actionRebaseWorkspace"/>
     <addaction name="actionLoadWorkspace"/>
     <addaction name="actionSaveWorkspace"/>
     <addaction name="actionCloseWorkspace"/>
@@ -57,6 +59,7 @@
     <property name="title">
      <string>Bookmarks</string>
     </property>
+    <addaction name="actionAddBookmark"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWorkspace"/>
@@ -195,6 +198,39 @@
    </property>
    <property name="toolTip">
     <string>Rename current workspace</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionRebaseRequest">
+   <property name="text">
+    <string>Rebase Request...</string>
+   </property>
+   <property name="toolTip">
+    <string>Rebase current request to new URL</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionRebaseWorkspace">
+   <property name="text">
+    <string>Rebase Workspace...</string>
+   </property>
+   <property name="toolTip">
+    <string>Rebase all requests to new URL</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::MenuRole::NoRole</enum>
+   </property>
+  </action>
+  <action name="actionAddBookmark">
+   <property name="text">
+    <string>Add Bookmark...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add current request to bookmarks</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

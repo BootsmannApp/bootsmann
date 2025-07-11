@@ -82,7 +82,7 @@ bool CWorkspaceGUI::Store(QSettings& settings) const
 
     // exclude INFO and LOG tabs
 	int cnt = 0;
-    for (int i = 2; i < tabCount; ++i) {
+    for (int i = 0; i < tabCount; ++i) {
         auto requestUI = dynamic_cast<CRequestGUI*>(ui->Tabs->widget(i));
         if (requestUI) {
             if (requestUI->IsDefault()) {
@@ -215,9 +215,34 @@ bool CWorkspaceGUI::RebaseCurrentRequest()
 		return false;  // user canceled
 
 	// set new URL
-    requestUI->RebaseURL(newUrl);
+    return requestUI->RebaseURL(newUrl);
+}
 
-    return false;
+
+bool CWorkspaceGUI::RebaseOpenRequests()
+{
+    auto requestUI = GetCurrentRequest();
+    if (!requestUI)
+        return false;  // no current request
+
+    QString currentUrl = requestUI->GetRequestURL(true);
+
+    QString newUrl = QInputDialog::getText(this, tr("Rebase Open Requests"),
+        tr("Enter new URL for all the open requests (omitted parts will not be changed):"), QLineEdit::Normal,
+        currentUrl);
+
+    if (newUrl.isEmpty())
+        return false;  // user canceled
+
+	int tabCount = ui->Tabs->count();
+    for (int i = 0; i < tabCount; ++i) {
+        auto requestUI = dynamic_cast<CRequestGUI*>(ui->Tabs->widget(i));
+        if (requestUI) {
+            requestUI->RebaseURL(newUrl);
+        }
+    }
+
+    return true;
 }
 
 
@@ -248,6 +273,54 @@ bool CWorkspaceGUI::HasRequests() const
 {
     // INFO and LOG tabs are always present
     return ui->Tabs->count() > 2; 
+}
+
+
+// Bookmarks
+
+bool CWorkspaceGUI::BookmarkCurrentRequest()
+{
+    auto requestUI = GetCurrentRequest();
+    if (!requestUI)
+        return false;  // no current request
+
+	QString bookmarkName = QInputDialog::getText(this, tr("Add to Bookmarks"),
+		tr("Enter a name for the bookmark:"), QLineEdit::Normal, "");
+
+    if (bookmarkName.isEmpty())
+		return false;  // user canceled
+
+    // simple for now
+	AddBookmark(bookmarkName, *requestUI);
+
+    return true;
+}
+
+
+bool CWorkspaceGUI::AddBookmark(const QString& name, const CRequestGUI& request)
+{
+    QString fileName = m_filePath.isEmpty() ? GetDefaultWorkspaceFileName() : m_filePath;
+    QSettings settings(fileName, QSettings::IniFormat);
+
+	settings.beginGroup("Bookmarks");
+	settings.beginGroup(name);
+	request.Store(settings);
+	settings.endGroup();
+	settings.endGroup();
+
+	// update the bookmarks list
+
+    return true;
+}
+
+
+
+
+// IO stuff
+
+QString CWorkspaceGUI::GetDefaultWorkspaceFileName()
+{
+    return QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/Default.bow";
 }
 
 

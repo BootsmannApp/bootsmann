@@ -930,13 +930,13 @@ void CRequestGUI::DecodeReply(QNetworkReply* reply, const QByteArray& data)
         bool ok = ShowReplyContent(DT_IMAGE, data, contentType);
     }
     // text, JSON, HTML...
-    else if (contentType.contains("application/json", Qt::CaseInsensitive)) {
+    else if (contentType.contains("/json", Qt::CaseInsensitive)) {
         ShowReplyContent(DT_JSON, data, contentType);
     }
-    else if (contentType.contains("text/html", Qt::CaseInsensitive)) {
+    else if (contentType.contains("/html", Qt::CaseInsensitive)) {
         ShowReplyContent(DT_HTML, data, contentType);
     }
-    else if (contentType.contains("text/plain", Qt::CaseInsensitive)) {
+    else if (contentType.contains("/plain", Qt::CaseInsensitive)) {
         ShowReplyContent(DT_PLAIN, data, contentType);
     }
     else {

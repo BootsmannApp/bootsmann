@@ -24,9 +24,14 @@ public:
     bool SaveCurrentRequest();
 
     bool RebaseCurrentRequest();
+    bool RebaseOpenRequests();
 
 	bool LoadRequest(); // to do: return index
 	bool HasRequests() const; 
+
+    bool BookmarkCurrentRequest();
+
+    static QString GetDefaultWorkspaceFileName();
 
 	bool SaveWorkspace();
 	bool LoadWorkspace();
@@ -44,6 +49,8 @@ protected:
     int AddRequestTab(int tabIndex = -1);
     CRequestGUI* GetCurrentRequest();
     CRequestGUI* GetRequest(int tabIndex);
+
+	bool AddBookmark(const QString& name, const CRequestGUI& request);
 
 private Q_SLOTS:
     void CloseRequestTab(int index);
