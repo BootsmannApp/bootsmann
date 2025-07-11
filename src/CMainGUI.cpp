@@ -37,6 +37,11 @@ CMainGUI::CMainGUI(QWidget *parent)
             "min-width: 100px;"
 		    "min-height: 30px;"
         "}\n"
+
+        "QInputDialog {"
+            "min-width: 400px;"
+        "}\n"
+
     );
 
     // init

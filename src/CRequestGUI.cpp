@@ -205,9 +205,57 @@ bool CRequestGUI::IsDefault() const
 }
 
 
-QString CRequestGUI::GetRequestUrl() const
+QString CRequestGUI::GetRequestURL(bool stripped) const
 {
+    if (stripped)
+    {
+        // Return the URL without any query parameters, user info, or fragment
+        QUrl url = QUrl::fromUserInput(ui->RequestURL->text().trimmed());
+
+		return url.adjusted(
+            QUrl::RemoveQuery | 
+            QUrl::RemoveUserInfo | 
+            QUrl::RemoveFragment | 
+            QUrl::StripTrailingSlash | 
+            QUrl::RemovePath
+        ).toString();
+    }
+
     return ui->RequestURL->text().trimmed();
+}
+
+
+bool CRequestGUI::RebaseURL(const QString& newUrl)
+{
+    if (newUrl.isEmpty()) {
+        QMessageBox::warning(this, tr("Empty URL"), tr("The provided URL is empty."));
+        return false; // No URL provided
+    }
+
+	QUrl sourceUrl = QUrl(newUrl);
+    if (!sourceUrl.isValid()) {
+        QMessageBox::warning(this, tr("Invalid URL"), tr("The provided URL is not valid."));
+        return false; // Invalid URL
+	}
+
+	QString scheme = sourceUrl.scheme();
+	QString host = sourceUrl.host();
+    int port = sourceUrl.port(-1);
+
+    QUrl url = QUrl(GetRequestURL());
+
+    if (scheme.size())
+		url.setScheme(scheme);
+	if (host.size())
+		url.setHost(host);
+	if (port >= 0)
+		url.setPort(port);
+
+	ui->RequestURL->setText(url.toString(QUrl::FullyEncoded));
+
+    RebuildURL();
+
+    return true;
 }
 
 
@@ -349,12 +397,24 @@ void CRequestGUI::on_AuthType_currentIndexChanged(int index)
 
 
 void CRequestGUI::on_RequestURL_editingFinished()
-{
-	UpdateTabTitle();
-        
+{        
     // parse URL and update request parameters
     QString request = ui->RequestURL->text().trimmed();
     QUrl sourceUrl = QUrl::fromUserInput(request);
+
+    // set default scheme to http
+    QString scheme = sourceUrl.scheme();
+    if (scheme.isEmpty()) {
+        sourceUrl.setScheme("http");
+        request.prepend("http://");
+        ui->RequestURL->setText(request);
+    }
+    if (scheme == "http" && !request.startsWith("http")) {
+        request.prepend("http://");
+        ui->RequestURL->setText(request);
+    }
+
+    UpdateTabTitle();
 
 	// check authentication type
 	auto userName = sourceUrl.userName();
@@ -364,7 +424,7 @@ void CRequestGUI::on_RequestURL_editingFinished()
             ui->AuthType->setCurrentIndex(0); // Reset to No authentication
 		}
     } else {
-        ui->AuthType->setCurrentIndex(1); // Basic authentication
+        ui->AuthType->setCurrentIndex(1); // Unencrypted authentication
         ui->AuthUser->setText(userName);
         ui->AuthPassword->setText(password);
 	}
@@ -570,6 +630,11 @@ void CRequestGUI::RebuildURL()
 
     // cut parameters from the URL
     QUrl targetUrl(sourceUrl.adjusted(QUrl::RemoveQuery | QUrl::RemoveUserInfo));
+
+    if (scheme.isEmpty()) {
+        scheme = "http"; // Default scheme if not specified
+		targetUrl.setScheme(scheme);
+	}
 	
 	auto params = ui->RequestParams->GetEnabledParams();
     if (!params.isEmpty()) {
@@ -653,12 +718,18 @@ void CRequestGUI::on_Run_clicked()
 {
     ClearResult();
 
-    QString request = ui->RequestURL->text().trimmed();
+    QUrl request = QUrl::fromUserInput(ui->RequestURL->text().trimmed());
     QString verb = ui->RequestType->currentText();
 
     if (request.isEmpty()){
         ui->ResultCode->setText(tr("ERROR"));
         ShowPlainText(tr("Request is empty"), false);
+        return;
+    }
+
+    if (!request.isValid()) {
+        ui->ResultCode->setText(tr("ERROR"));
+        ShowPlainText(tr("Request is invalid"), false);
         return;
     }
 
@@ -677,12 +748,12 @@ void CRequestGUI::on_Run_clicked()
             return;
         }
 
-        reply = m_reqMgr.UploadRequest(this, verb.toLocal8Bit(), QUrl(request), m_fileToUpload, GetRequestHeaders());
+        reply = m_reqMgr.UploadRequest(this, verb.toLocal8Bit(), request, m_fileToUpload, GetRequestHeaders());
 	}
 
     if (!reply) {
 		auto payload = ui->RequestBody->toPlainText().toUtf8();
-        reply = m_reqMgr.SendRequest(this, verb.toLocal8Bit(), QUrl(request), payload, GetRequestHeaders());
+        reply = m_reqMgr.SendRequest(this, verb.toLocal8Bit(), request, payload, GetRequestHeaders());
     }
 
     LockRequest();

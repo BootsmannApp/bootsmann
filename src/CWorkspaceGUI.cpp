@@ -205,19 +205,17 @@ bool CWorkspaceGUI::RebaseCurrentRequest()
     if (!requestUI)
         return false;  // no current request
 
-	QString currentUrl = QUrl(requestUI->GetRequestUrl())
-        .adjusted(QUrl::RemovePath | QUrl::RemoveUserInfo | QUrl::RemoveQuery | QUrl::RemoveFragment | QUrl::StripTrailingSlash | QUrl::NormalizePathSegments)
-        .toString();
+	QString currentUrl = requestUI->GetRequestURL(true);
 
 	QString newUrl = QInputDialog::getText(this, tr("Rebase Request"), 
-        tr("Enter new URL for the request:"), QLineEdit::Normal, 
+        tr("Enter new URL for the request (omitted parts will not be changed):"), QLineEdit::Normal, 
         currentUrl);
 
     if (newUrl.isEmpty())
 		return false;  // user canceled
 
 	// set new URL
-	//requestUI->SetRequestUrl(newUrl);
+    requestUI->RebaseURL(newUrl);
 
     return false;
 }

@@ -31,7 +31,8 @@ public:
     void Init();
     bool IsDefault() const;
 
-    QString GetRequestUrl() const;
+    QString GetRequestURL(bool stripped = false) const;
+	bool RebaseURL(const QString& newUrl);
 
 	bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
