@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <QJsonDocument>
 #include <QTemporaryFile>
+#include <QTemporaryDir>
 #include <QImageReader>
 #include <QBuffer>
 #include <QFileDialog>
@@ -256,6 +257,28 @@ bool CRequestGUI::RebaseURL(const QString& newUrl)
     RebuildURL();
 
     return true;
+}
+
+
+QString CRequestGUI::StoreToString() const
+{
+    QTemporaryDir td;
+    td.setAutoRemove(true);
+    auto fileName = td.filePath("bootsmann.ini");
+    {
+        QSettings settings(fileName, QSettings::IniFormat);
+        this->Store(settings);
+        settings.sync();  // Ensure all data is written
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) 
+        return QString();
+	// Read the contents of the file
+    QString contents = file.readAll();
+    file.close();
+
+    return contents;
 }
 
 

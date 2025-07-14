@@ -4,12 +4,15 @@
 #include <QWidget>
 #include <QSettings>
 
+#include "CBookmarkManager.h"
+
 namespace Ui {
 class CWorkspaceGUI;
 }
 
 class CRequestManager;
 class CRequestGUI;
+
 
 class CWorkspaceGUI : public QWidget
 {
@@ -30,6 +33,7 @@ public:
 	bool HasRequests() const; 
 
     bool BookmarkCurrentRequest();
+	QStringList GetBookmarks() const { return m_bookmarkMgr.GetBookmarks(); }
 
     static QString GetDefaultWorkspaceFileName();
 
@@ -42,6 +46,7 @@ public:
 
 	bool IsDefault() const { return m_name.isEmpty() && m_filePath.isEmpty(); }
 
+    // IO
     bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
 
@@ -49,8 +54,6 @@ protected:
     int AddRequestTab(int tabIndex = -1);
     CRequestGUI* GetCurrentRequest();
     CRequestGUI* GetRequest(int tabIndex);
-
-	bool AddBookmark(const QString& name, const CRequestGUI& request);
 
 private Q_SLOTS:
     void CloseRequestTab(int index);
@@ -60,6 +63,7 @@ private Q_SLOTS:
 private:
     Ui::CWorkspaceGUI *ui;
 
+	CBookmarkManager m_bookmarkMgr;
     CRequestManager& m_reqMgr;
 
 	QString m_lastLoadPath;
@@ -67,6 +71,7 @@ private:
 
     QString m_filePath;
 
+	// workspace name
     QString m_name;
 };
 

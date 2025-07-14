@@ -52,6 +52,7 @@ private Q_SLOTS:
 private:
 	void CreateDefaultWorkspace();
 	void UpdateTitle();
+	void UpdateBookmarks();
 
     Ui::CMainGUI *ui = nullptr;
 	CRequestManager m_reqMgr;

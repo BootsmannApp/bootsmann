@@ -3,6 +3,7 @@
 
 #include "CRequestGUI.h"
 
+
 #include <QTabBar>
 #include <QToolButton>
 #include <QFileDialog>
@@ -100,6 +101,9 @@ bool CWorkspaceGUI::Store(QSettings& settings) const
 
     settings.setValue("TabCount", cnt);
 
+    // bookmarks
+    m_bookmarkMgr.Store(settings);
+
 	// finish saving
     settings.endGroup();
 	return true;
@@ -145,6 +149,9 @@ bool CWorkspaceGUI::Restore(QSettings& settings)
     int currentTabIndex = settings.value("CurrentTabIndex", -1).toInt();
     ui->Tabs->setCurrentIndex(currentTabIndex);
 
+	// bookmarks
+	m_bookmarkMgr.Restore(settings);
+
     settings.endGroup();
 
     if (ui->Tabs->count() ==2) {
@@ -164,7 +171,8 @@ int CWorkspaceGUI::CloneCurrentRequest()
 
     QTemporaryFile tempIni;
     tempIni.open();  // Creates a temp file
-    QSettings settings(tempIni.fileName(), QSettings::IniFormat);
+    QString fileName = tempIni.fileName();
+    QSettings settings(fileName, QSettings::IniFormat);
 	requestUI->Store(settings);
 	settings.sync();  // Ensure all data is written
 
@@ -284,36 +292,11 @@ bool CWorkspaceGUI::BookmarkCurrentRequest()
     if (!requestUI)
         return false;  // no current request
 
-	QString bookmarkName = QInputDialog::getText(this, tr("Add to Bookmarks"),
-		tr("Enter a name for the bookmark:"), QLineEdit::Normal, "");
-
-    if (bookmarkName.isEmpty())
-		return false;  // user canceled
-
-    // simple for now
-	AddBookmark(bookmarkName, *requestUI);
-
-    return true;
-}
-
-
-bool CWorkspaceGUI::AddBookmark(const QString& name, const CRequestGUI& request)
-{
     QString fileName = m_filePath.isEmpty() ? GetDefaultWorkspaceFileName() : m_filePath;
     QSettings settings(fileName, QSettings::IniFormat);
 
-	settings.beginGroup("Bookmarks");
-	settings.beginGroup(name);
-	request.Store(settings);
-	settings.endGroup();
-	settings.endGroup();
-
-	// update the bookmarks list
-
-    return true;
+    return m_bookmarkMgr.AddNewBookmark(*requestUI, settings);
 }
-
-
 
 
 // IO stuff

@@ -73,6 +73,7 @@ void CMainGUI::CreateDefaultWorkspace()
     setCentralWidget(m_activeWorkspace);
 
     UpdateTitle();
+    UpdateBookmarks();
 }
 
 
@@ -87,6 +88,28 @@ void CMainGUI::UpdateTitle()
     } else {
         setWindowTitle(tr("<No Workspace>"));
 	}
+}
+
+
+void CMainGUI::UpdateBookmarks()
+{
+	ui->menuBookmarks->clear();
+    ui->menuBookmarks->addAction(ui->actionAddBookmark);
+
+    if (m_activeWorkspace) {
+        // get bookmarks of the workspace
+		auto bookmarks = m_activeWorkspace->GetBookmarks();
+        if (!bookmarks.isEmpty()) {
+            ui->menuBookmarks->addSeparator();
+
+            for (const auto& bookmark : bookmarks) {
+                QAction* action = ui->menuBookmarks->addAction(bookmark);
+                connect(action, &QAction::triggered, this, [this, bookmark]() {
+                    //m_activeWorkspace->LoadBookmark(bookmark);
+                });
+            }
+		}
+    }
 }
 
 
@@ -189,9 +212,6 @@ void CMainGUI::on_actionNewWorkspace_triggered()
 
 	// save with new name
     m_activeWorkspace->SaveWorkspace();
-    
-	// set title
-    UpdateTitle();
 }
 
 
@@ -206,6 +226,7 @@ void CMainGUI::on_actionLoadWorkspace_triggered()
 	if (m_activeWorkspace->LoadWorkspace())
     {
 		UpdateTitle();
+        UpdateBookmarks();
     }
 }
 
@@ -225,6 +246,7 @@ void CMainGUI::on_actionCloseWorkspace_triggered()
 
     // set title
     UpdateTitle();
+	UpdateBookmarks();
 }
 
 
@@ -269,7 +291,10 @@ void CMainGUI::on_actionRebaseWorkspace_triggered()
 
 void CMainGUI::on_actionAddBookmark_triggered()
 {
-    m_activeWorkspace->BookmarkCurrentRequest();
+    if (m_activeWorkspace->BookmarkCurrentRequest())
+    {
+        UpdateBookmarks();
+    }
 }
 
 
@@ -319,6 +344,9 @@ void CMainGUI::RestoreSession()
 
     // restore default workspace
     m_activeWorkspace->Restore(settings);
+
+    UpdateTitle();
+    UpdateBookmarks();
     
     // restore other settings if needed
 	// ...

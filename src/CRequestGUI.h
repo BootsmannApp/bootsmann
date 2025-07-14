@@ -34,6 +34,9 @@ public:
     QString GetRequestURL(bool stripped = false) const;
 	bool RebaseURL(const QString& newUrl);
 
+	QString StoreToString() const;
+
+    // IO
 	bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
 
