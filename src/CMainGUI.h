@@ -44,7 +44,7 @@ public Q_SLOTS:
 	void on_actionRenameWorkspace_triggered();
 	void on_actionRebaseWorkspace_triggered();
 
-	void on_actionAddBookmark_triggered();
+	void on_menuBookmarks_aboutToShow();
 
 private Q_SLOTS:
 	void OnQuitApplication();

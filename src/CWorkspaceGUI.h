@@ -32,9 +32,9 @@ public:
 	bool LoadRequest(); // to do: return index
 	bool HasRequests() const; 
 
-    QStringList GetBookmarks() const { return m_bookmarkMgr.GetBookmarks(); }
     bool BookmarkCurrentRequest();
 	bool LoadBookmark(const QString& bookmark);
+    void UpdateBookmarksMenu(QMenu* menu);
 
     static QString GetDefaultWorkspaceFileName();
 

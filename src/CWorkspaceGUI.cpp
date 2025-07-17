@@ -311,6 +311,29 @@ bool CWorkspaceGUI::LoadBookmark(const QString& bookmark)
 }
 
 
+void CWorkspaceGUI::UpdateBookmarksMenu(QMenu* menu)
+{
+    menu->clear();
+
+    menu->addAction(tr("Add Bookmark..."), this, [this]() {
+        BookmarkCurrentRequest();
+    });
+
+    // get bookmarks of the workspace
+    auto bookmarks = m_bookmarkMgr.GetBookmarks();
+    if (!bookmarks.isEmpty()) {
+        menu->addSeparator();
+
+        for (const auto& bookmark : bookmarks) {
+            QAction* action = menu->addAction(bookmark);
+            connect(action, &QAction::triggered, this, [this, bookmark]() {
+                LoadBookmark(bookmark);
+            });
+        }
+    }
+}
+
+
 // IO stuff
 
 QString CWorkspaceGUI::GetDefaultWorkspaceFileName()

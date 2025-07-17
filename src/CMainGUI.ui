@@ -59,7 +59,6 @@
     <property name="title">
      <string>Bookmarks</string>
     </property>
-    <addaction name="actionAddBookmark"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuWorkspace"/>
@@ -220,17 +219,6 @@
    </property>
    <property name="toolTip">
     <string>Rebase all requests to new URL</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
-  <action name="actionAddBookmark">
-   <property name="text">
-    <string>Add Bookmark...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add current request to bookmarks</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

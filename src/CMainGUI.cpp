@@ -93,22 +93,8 @@ void CMainGUI::UpdateTitle()
 
 void CMainGUI::UpdateBookmarks()
 {
-	ui->menuBookmarks->clear();
-    ui->menuBookmarks->addAction(ui->actionAddBookmark);
-
     if (m_activeWorkspace) {
-        // get bookmarks of the workspace
-		auto bookmarks = m_activeWorkspace->GetBookmarks();
-        if (!bookmarks.isEmpty()) {
-            ui->menuBookmarks->addSeparator();
-
-            for (const auto& bookmark : bookmarks) {
-                QAction* action = ui->menuBookmarks->addAction(bookmark);
-                connect(action, &QAction::triggered, this, [this, bookmark]() {
-                    m_activeWorkspace->LoadBookmark(bookmark);
-                });
-            }
-		}
+        m_activeWorkspace->UpdateBookmarksMenu(ui->menuBookmarks);
     }
 }
 
@@ -289,12 +275,10 @@ void CMainGUI::on_actionRebaseWorkspace_triggered()
 }
 
 
-void CMainGUI::on_actionAddBookmark_triggered()
+void CMainGUI::on_menuBookmarks_aboutToShow()
 {
-    if (m_activeWorkspace->BookmarkCurrentRequest())
-    {
-        UpdateBookmarks();
-    }
+    if (m_activeWorkspace)
+		m_activeWorkspace->UpdateBookmarksMenu(ui->menuBookmarks);
 }
 
 
