@@ -105,7 +105,7 @@ void CMainGUI::UpdateBookmarks()
             for (const auto& bookmark : bookmarks) {
                 QAction* action = ui->menuBookmarks->addAction(bookmark);
                 connect(action, &QAction::triggered, this, [this, bookmark]() {
-                    //m_activeWorkspace->LoadBookmark(bookmark);
+                    m_activeWorkspace->LoadBookmark(bookmark);
                 });
             }
 		}

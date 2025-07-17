@@ -35,6 +35,7 @@ public:
 	bool RebaseURL(const QString& newUrl);
 
 	QString StoreToString() const;
+	bool RestoreFromString(const QString& data);
 
     // IO
 	bool Store(QSettings& settings) const;

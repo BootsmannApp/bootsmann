@@ -299,6 +299,18 @@ bool CWorkspaceGUI::BookmarkCurrentRequest()
 }
 
 
+bool CWorkspaceGUI::LoadBookmark(const QString& bookmark)
+{
+    if (bookmark.isEmpty() || !m_bookmarkMgr.IsBookmarked(bookmark))
+		return false;
+
+	int idx = AddRequestTab();
+	auto requestUI = GetRequest(idx);
+
+	return m_bookmarkMgr.OpenBookmark(*requestUI, bookmark);
+}
+
+
 // IO stuff
 
 QString CWorkspaceGUI::GetDefaultWorkspaceFileName()

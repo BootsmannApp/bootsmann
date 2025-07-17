@@ -42,6 +42,15 @@ bool CBookmarkManager::AddNewBookmark(const CRequestGUI& requestUI, QSettings& s
 }
 
 
+bool CBookmarkManager::OpenBookmark(CRequestGUI& requestUI, const QString& name)
+{
+	if (!m_bookmarks.contains(name))
+		return false;
+
+	return requestUI.RestoreFromString(m_bookmarks[name].toString());
+}
+
+
 bool CBookmarkManager::IsBookmarked(const QString& name) const
 {
 	return m_bookmarks.contains(name);

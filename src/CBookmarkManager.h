@@ -15,6 +15,8 @@ public:
 	~CBookmarkManager();
 
 	bool AddNewBookmark(const CRequestGUI& requestUI, QSettings& settings);
+	bool OpenBookmark(CRequestGUI& requestUI, const QString& name);
+
 	bool IsBookmarked(const QString& name) const;
 	QStringList GetBookmarks() const;
 

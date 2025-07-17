@@ -274,11 +274,35 @@ QString CRequestGUI::StoreToString() const
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) 
         return QString();
+
 	// Read the contents of the file
     QString contents = file.readAll();
     file.close();
 
     return contents;
+}
+
+
+bool CRequestGUI::RestoreFromString(const QString& data)
+{
+    QTemporaryDir td;
+    td.setAutoRemove(true);
+    auto fileName = td.filePath("bootsmann.ini");
+    {
+        QFile file(fileName);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            return false; // Failed to open file for writing
+        }
+        file.write(data.toUtf8());
+		file.close();
+    }
+    {
+        QSettings settings(fileName, QSettings::IniFormat);
+        this->Restore(settings);
+        settings.sync();  // Ensure all data is read
+    }
+
+    return true;
 }
 
 
