@@ -311,6 +311,44 @@ bool CWorkspaceGUI::LoadBookmark(const QString& bookmark)
 }
 
 
+bool CWorkspaceGUI::RemoveBookmark(const QString& bookmark)
+{
+    int r = QMessageBox::question(this, tr("Delete Bookmark"),
+        tr("Are you sure you want to delete the bookmark '%1'?").arg(bookmark),
+        QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+    if (r == QMessageBox::Yes) {
+        // delete bookmark
+        return m_bookmarkMgr.RemoveBookmark(bookmark);
+    }
+
+	return false;  // user canceled
+}
+
+
+bool CWorkspaceGUI::RenameBookmark(const QString& bookmark)
+{
+    if (m_bookmarkMgr.IsBookmarked(bookmark)) {
+        QString newName = QInputDialog::getText(this, tr("Rename Bookmark"),
+            tr("Enter new name for the bookmark '%1':").arg(bookmark), QLineEdit::Normal,
+            bookmark);
+
+        if (newName.isEmpty()) {
+            // user canceled
+            return false;
+		}
+
+        if (m_bookmarkMgr.IsBookmarked(newName)) {
+			return false;  // bookmark with the new name already exists
+        }
+        
+        return m_bookmarkMgr.RenameBookmark(bookmark, newName);
+	}
+
+    return false;
+}
+
+
 void CWorkspaceGUI::UpdateBookmarksMenu(QMenu* menu)
 {
     menu->clear();
@@ -319,16 +357,42 @@ void CWorkspaceGUI::UpdateBookmarksMenu(QMenu* menu)
         BookmarkCurrentRequest();
     });
 
+    //connect(menu, &QMenu::triggered, this, [menu](QAction* action) {
+    //    action->setChecked(true);
+    //    });
+
     // get bookmarks of the workspace
     auto bookmarks = m_bookmarkMgr.GetBookmarks();
     if (!bookmarks.isEmpty()) {
         menu->addSeparator();
 
         for (const auto& bookmark : bookmarks) {
-            QAction* action = menu->addAction(bookmark);
+			QMenu* bookMenu = menu->addMenu(bookmark);
+
+            QAction* action = bookMenu->addAction(tr("Use"));
             connect(action, &QAction::triggered, this, [this, bookmark]() {
                 LoadBookmark(bookmark);
             });
+
+			bookMenu->setActiveAction(action);
+
+			bookMenu->addSeparator();
+
+            QAction* actionDelete = bookMenu->addAction(tr("Delete..."));
+            connect(actionDelete, &QAction::triggered, this, [this, bookmark]() {
+				RemoveBookmark(bookmark);
+			});
+
+            QAction* actionRename = bookMenu->addAction(tr("Rename..."));
+            connect(actionRename, &QAction::triggered, this, [this, bookmark]() {
+                bool ok;
+                QString newName = QInputDialog::getText(this, tr("Rename Bookmark"),
+                    tr("Enter new name for the bookmark '%1':").arg(bookmark), QLineEdit::Normal,
+                    bookmark, &ok);
+                if (ok && !newName.isEmpty()) {
+                    m_bookmarkMgr.RenameBookmark(bookmark, newName);
+                }
+				});
         }
     }
 }

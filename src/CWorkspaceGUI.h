@@ -34,6 +34,8 @@ public:
 
     bool BookmarkCurrentRequest();
 	bool LoadBookmark(const QString& bookmark);
+	bool RemoveBookmark(const QString& bookmark);
+	bool RenameBookmark(const QString& bookmark);
     void UpdateBookmarksMenu(QMenu* menu);
 
     static QString GetDefaultWorkspaceFileName();

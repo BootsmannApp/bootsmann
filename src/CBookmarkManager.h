@@ -20,6 +20,9 @@ public:
 	bool IsBookmarked(const QString& name) const;
 	QStringList GetBookmarks() const;
 
+	bool RemoveBookmark(const QString& name);
+	bool RenameBookmark(const QString& oldName, const QString& newName);
+
 	// IO
 	bool Store(QSettings& settings) const;
 	bool Restore(QSettings& settings);

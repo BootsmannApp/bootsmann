@@ -51,6 +51,29 @@ bool CBookmarkManager::OpenBookmark(CRequestGUI& requestUI, const QString& name)
 }
 
 
+bool CBookmarkManager::RemoveBookmark(const QString& name)
+{
+	if (!m_bookmarks.contains(name))
+		return false;
+
+	m_bookmarks.remove(name);
+	return true;
+}
+
+
+bool CBookmarkManager::RenameBookmark(const QString& oldName, const QString& newName)
+{
+	if (!m_bookmarks.contains(oldName))
+		return false;
+
+	if (m_bookmarks.contains(newName))
+		return false;
+
+	m_bookmarks[newName] = m_bookmarks.take(oldName);
+	return true;
+}
+
+
 bool CBookmarkManager::IsBookmarked(const QString& name) const
 {
 	return m_bookmarks.contains(name);
