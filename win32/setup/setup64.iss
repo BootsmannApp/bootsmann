@@ -3,7 +3,7 @@
 
 #define MyAppName "Bootsmann"
 #define MyAppVersion "0.1.0 (64 bit)"
-#define MyAppPublisher "Ars L. Masiuk"
+#define MyAppPublisher "BootsmannApp"
 #define MyAppURL "https://github.com/BootsmannApp/bootsmann"
 #define MyAppExeName "bootsmann.exe"
 
@@ -32,7 +32,7 @@ OutputBaseFilename=bootsmann-0.1-setup-64bit
 DefaultDirName={pf}\Bootsmann
 
 VersionInfoDescription=Bootsmann Installer
-VersionInfoCopyright=© 2025 Ars L. Masiuk
+VersionInfoCopyright=© 2025 BootsmannApp
 VersionInfoVersion=0.1.0.0
 
 [Languages]
@@ -52,22 +52,26 @@ Source: "_output\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdi
 ;Source: "..\build_msvc_2022_64\vc_redist.x64.exe"; DestDir: {tmp}; Flags: deleteafterinstall
 
 Source: "..\..\LICENSE"; DestDir: "{app}"
-;Source: "..\..\CHANGES"; DestDir: "{app}"
+Source: "..\..\CHANGES"; DestDir: "{app}"
 Source: "..\..\README.md"; DestDir: "{app}"
 ;Source: "..\..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
 ;Source: "..\3rdParty\tools\*"; DestDir: "{app}\tools"; Flags: ignoreversion recursesubdirs createallsubdirs
 
+Source: ".\msvc\*"; DestDir: {tmp};
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"
-Name: "{group}\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: quicklaunchicon
-Name: "{group}\{cm:UninstallProgram, {#MyAppName}}"; Filename: "{uninstallexe}"
+
+Name: "{group}\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"
+;Name: "{group}\Bootsmann\{cm:UninstallProgram,{#MyAppName}}"; Filename: "{uninstallexe}"
+;Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\bin\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
-;Filename: {tmp}\vc_redist.x64.exe; \
+Filename: {tmp}\vcredist2015_2017_2019_2022_x64.exe; \
     Parameters: "/q /passive /Q:a /c:""msiexec /q /i vcredist.msi"""; \
-    StatusMsg: "Installing Microsoft Visual C++ 2015-2022 Redistributables (x64)..."
+    StatusMsg: "Installing Microsoft Visual C++ 2015-2022 Redistributables (x64)..."; \
+    Flags: runhidden waituntilterminated
 
 Filename: "{app}\bin\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
