@@ -48,3 +48,43 @@ If you like the software, you can support its development by making a donation (
   [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z35EHHJ3729GG&source=url)
 
 Thank you!
+
+## Installation
+
+Prebuild Windows binaries can be loaded from "Releases" page.
+
+Or you can get the sources and build them by yourself. 
+In this case you need to have installed Qt 6.x toolkit and corresponding C++ compiler with C++17 support. 
+Bootsmann uses native Qt build system (main project file is bootsmann.pro) and requires qmake to be run first:
+
+```
+cd <bootsmann_app\src\bootsmann.pro>
+qmake -r
+```
+
+Then run corresponding 'make' command to build the application:
+
+Linux GCC, macOS Clang:
+
+```
+make
+```
+
+or Windows MinGW:
+
+```
+mingw32-make
+```
+
+or Windows MSVC:
+
+```
+nmake
+```
+
+or by Jom:
+
+```
+jom
+```
+
