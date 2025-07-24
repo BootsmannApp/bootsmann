@@ -1,0 +1,29 @@
+BootsmannApp
+--------------------------------------------------------------------------------
+
+A minimalistic, lean and fast HTTP REST API test application (opensource C++
+alternative to Postman/Insomnia/Hoppscotch etc. for simple HTTP REST API
+testing).
+
+It is especially useful for embedded devices and local development, where
+low memory usage and fast response times are crucial.
+
+The sources etc. can be found at: https://github.com/BootsmannApp/bootsmann
+
+
+List of changes
+................................................................................
+
+0.1.0.0 - Initial demo-release
+
+- Building and executing basic HTTP requests
+- Visual editing of parameters and headers
+- Common file and clipboard operations
+- Basic user authentification (Unencrypted, Basic, Bearer token)
+- Parsing and visualising server replies in a human-convenient form
+- Dynamic loading of HTML replies
+- Support of bookmarks and workspaces
+
+
+................................................................................
+2025 (C) Ars L. Masiuk

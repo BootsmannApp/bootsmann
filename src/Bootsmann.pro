@@ -30,8 +30,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 win32{
 	VERSION = 0.1.0.0
 	RC_ICONS = $$PWD/../win32/icon.ico
-	QMAKE_TARGET_COPYRIGHT = (C) 2025 Ars L. Masiuk
-	QMAKE_TARGET_DESCRIPTION = Bootsmann REST API Tester
+	QMAKE_TARGET_COPYRIGHT = (C) 2025 BootsmannApp
+	QMAKE_TARGET_DESCRIPTION = Bootsmann REST API Testing Software
 	QMAKE_TARGET_PRODUCT = Bootsmann
 	LIBS += -ladvapi32
 }

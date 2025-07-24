@@ -6,12 +6,14 @@ It is especially useful for embedded devices and local development, where low me
 
 ## Key Features
 - **Lean**: Designed to be lightweight - low memory footprint and resource usage.
-- **Native code**: Built with a C++ compiler - no Electron or other web-based frameworks used.
+- **Native**: Built with a C++ compiler - no Electron or other web-based frameworks used.
 - **Direct calls**: Uses direct system calls to run the requests at highest speed - no JS-based middleware, therefore fast and efficient.
 - **Offline-capable**: Can be used without an internet connection, making it suitable for local development and testing, especially for embedded devices.
 - **Secure**: Does not upload any user data or API keys, ensuring privacy and security. No registration or login required.
+<!--
 - **Portable**: Can be run directly from the executable without installation, making it portable and easier to use.
 - **Multiplatform**: Runs on various operating systems including Windows, macOS, and Linux - thanks to Qt framework.
+-->
 - **Intuitive**: Provides a simple (but functional) graphical user interface.
 - **Open source**: Available under the MIT License, allowing for free use, modification, and distribution.
 
@@ -22,12 +24,13 @@ It is especially useful for embedded devices and local development, where low me
 </p>
 
 ## Core Functionality
-- Building and executing HTTP requests visually
+- Building and executing most common HTTP requests
 - Visual editing of parameters and headers
 - Common file and clipboard operations
 - Basic user authentification (Unencrypted, Basic, Bearer token)
 - Parsing and visualising server replies in a human-convenient form
 - Dynamic loading of HTML replies
+- Support of bookmarks and workspaces
 
 ## Measurements
 
