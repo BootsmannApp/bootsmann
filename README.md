@@ -51,9 +51,15 @@ Thank you!
 
 ## Installation
 
-Prebuild Windows binaries can be loaded from "Releases" page.
+Prebuild Windows binaries can be loaded from "[Releases](https://github.com/BootsmannApp/bootsmann/releases)" page.
 
-Or you can get the sources and build them by yourself. 
+Or, alternativery, there is a page on SourceForge: 
+
+[![Download Bootsmann](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/bootsmann/files/latest/download)
+
+## Building from sources
+
+Of course, you can get the sources and build them by yourself. 
 In this case you need to have installed Qt 6.x toolkit and corresponding C++ compiler with C++17 support. 
 Bootsmann uses native Qt build system (main project file is bootsmann.pro) and requires qmake to be run first:
 
@@ -88,3 +94,6 @@ or by Jom:
 jom
 ```
 
+## External Links
+
+<a href="https://sourceforge.net/p/bootsmann/"><img alt="Download Bootsmann" src="https://sourceforge.net/sflogo.php?type=17&amp;group_id=3896710" width=200></a>
