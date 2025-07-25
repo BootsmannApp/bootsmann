@@ -34,10 +34,12 @@ It is especially useful for embedded devices and local development, where low me
 
 ## Measurements
 
-| Average values            | Postman & Insomnia    | Hoppscotch	| Bootsmann
-| --------------------------| --------------------- |-----------	|--------------- 
-| Memory usage				| 400-500 MB			| 60-70 MB		| 20-40 MB
-| Responce timings			| 120-150 ms			| 100-110 ms	| 70-80 ms
+| Average values                      | Postman & Insomnia    | Hoppscotch	      | Bruno         | Bootsmann
+| --------------------------          | --------------------- |-----------	      |---------------|---------------  
+| Memory usage (after startup)				| 400-500 MB			      | 60-70 MB		      | 320-340 MB    | 20-40 MB
+| Memory usage (Web page opened)		  | 470-620 MB			      | <not delivered>		| 350-370 MB    | 120-150 MB
+| Responce timings			              | 120-150 ms			      | 100-110 ms	      | 70-80 ms      | 70-80 ms
+| Startup timings			                | 7-12 s			          | 6-8 s	            | 4-6 s         | 1-3 s
 
 (Measurements are done on the same hardware and OS, running the same REST API requests. Values are averages of 10 runs.)
 
