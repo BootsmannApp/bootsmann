@@ -1,14 +1,37 @@
-BootsmannApp
+BootsmannApp - C++ HTTP REST API tester
 --------------------------------------------------------------------------------
 
 A minimalistic, lean and fast HTTP REST API test application (opensource C++
 alternative to Postman/Insomnia/Hoppscotch etc. for simple HTTP REST API
-testing).
+testing). It provides a simple (but functional) graphical user interface and
+a basic set of functions to issue REST API requests.
 
-It is especially useful for embedded devices and local development, where
-low memory usage and fast response times are crucial.
+Bootsmann is especially useful for embedded devices and local development, where
+low memory usage and fast response times are crucial (it requires ca. 5-10
+times less RAM than "big brothers" and starts in a second).
 
-The sources etc. can be found at: https://github.com/BootsmannApp/bootsmann
+Written in C++ on top of Qt framework, Bootsmann is free of unnecessary things
+like Electron, telemetry, cloud stuff and other bloatware.
+
+It uses direct system calls to run the requests at highest speed - no JS-based
+middleware, therefore fast and efficient.
+
+It does not upload any user data or API keys, ensuring privacy and security.
+No registration or login required.
+
+Bootsmann is available under the MIT License, allowing for free use, modification,
+and distribution.
+
+
+Bootsmann at GitHub:
+https://github.com/BootsmannApp/bootsmann
+
+Bootsmann at Softpedia:
+https://www.softpedia.com/get/Programming/Other-Programming-Files/Bootsmann.shtml
+
+Bootsmann at SourceForge:
+https://sourceforge.net/projects/bootsmann/
+
 
 
 List of changes
@@ -16,7 +39,8 @@ List of changes
 
 0.1.1.0 - not released yet
 
-- Fixed #7 (After saving a workspace, title is not updated)
+- Fixed #7 - After saving a workspace, title is not updated
+- Added #10 - Custom requests implemented
 
 
 ................................................................................
