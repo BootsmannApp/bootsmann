@@ -353,7 +353,7 @@ void CWorkspaceGUI::UpdateBookmarksMenu(QMenu* menu)
 {
     menu->clear();
 
-    menu->addAction(tr("Add Bookmark..."), this, [this]() {
+    menu->addAction(QIcon(":/Icons/Bookmark"), tr("Add Bookmark..."), this, [this]() {
         BookmarkCurrentRequest();
     });
 

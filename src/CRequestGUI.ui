@@ -53,8 +53,20 @@
             <property name="toolTip">
              <string>Request type</string>
             </property>
+            <property name="editable">
+             <bool>true</bool>
+            </property>
             <property name="currentText">
              <string notr="true">GET</string>
+            </property>
+            <property name="maxVisibleItems">
+             <number>20</number>
+            </property>
+            <property name="insertPolicy">
+             <enum>QComboBox::InsertPolicy::NoInsert</enum>
+            </property>
+            <property name="placeholderText">
+             <string>&lt;Custom request&gt;</string>
             </property>
             <item>
              <property name="text">

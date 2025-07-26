@@ -31,6 +31,8 @@ public:
     void Init();
     bool IsDefault() const;
 
+    QString GetVerb() const;
+    QString GetPath() const;
     QString GetRequestURL(bool stripped = false) const;
 	bool RebaseURL(const QString& newUrl);
 
@@ -71,7 +73,7 @@ private Q_SLOTS:
 	void on_AuthToken_editingFinished()     { RebuildURL(); }
 
     void on_RequestURL_editingFinished();
-    void on_RequestType_currentIndexChanged(int index);
+    void on_RequestType_currentTextChanged(const QString& text);
 	void on_RequestParams_cellChanged(int row, int column);
 	void on_RequestDataType_currentIndexChanged(int index);
 	void on_LoadRequestBody_clicked();

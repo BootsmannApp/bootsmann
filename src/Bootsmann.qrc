@@ -11,5 +11,6 @@
     <file alias="Add">./Icons/Add.png</file>
     <file alias="Remove">./Icons/Remove.png</file>
     <file alias="Run">./Icons/Run.png</file>
+    <file alias="Bookmark">./Icons/Bookmark.png</file>
   </qresource>
 </RCC>

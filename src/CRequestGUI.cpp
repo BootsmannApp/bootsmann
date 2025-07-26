@@ -14,6 +14,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QMenu>
+#include <QStandardItemModel>
 
 
 CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
@@ -68,6 +69,18 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
 	ui->RequestType->setItemData(7, QColor("#a0a0a0"), Qt::ForegroundRole);     // TRACE
     ui->RequestType->setItemData(8, QColor("#ac75f0"), Qt::ForegroundRole);     // CONNECT
 	ui->RequestType->setItemData(9, QColor("#a0a0f0"), Qt::ForegroundRole);     // LIST
+
+ //   if (auto model = dynamic_cast<QStandardItemModel*> ( ui->RequestType->model() ))
+ //   {
+ //       // Add separator (disabled and non-selectable item)
+ //       QStandardItem* separator = new QStandardItem(QString(20, QChar('-')));
+ //       separator->setFlags(Qt::NoItemFlags); // Not selectable or enabled
+ //       model->appendRow(separator);
+	//}
+
+	//ui->RequestType->addItem(tr("Custom..."));
+ //   ui->RequestType->setItemData(10, QColor("#aaa"), Qt::ForegroundRole);     // --
+ //   ui->RequestType->setItemData(11, QColor("#333"), Qt::ForegroundRole);     // Custom
 
     UpdateRequestType();
 }
@@ -203,6 +216,19 @@ bool CRequestGUI::IsDefault() const
     return ui->RequestURL->text().isEmpty() 
         && ui->RequestParams->rowCount() == 0 
         && ui->RequestBody->toPlainText().isEmpty();
+}
+
+
+QString CRequestGUI::GetVerb() const
+{
+    return ui->RequestType->currentText().trimmed();
+}
+
+
+QString CRequestGUI::GetPath() const
+{
+    QUrl url = QUrl::fromUserInput(ui->RequestURL->text().trimmed());
+    return url.path();
 }
 
 
@@ -511,7 +537,7 @@ void CRequestGUI::on_RequestURL_editingFinished()
 }
 
 
-void CRequestGUI::on_RequestType_currentIndexChanged(int /*index*/)
+void CRequestGUI::on_RequestType_currentTextChanged(const QString& /*text*/)
 {
     UpdateTabTitle();
 	UpdateRequestType();
@@ -748,16 +774,23 @@ void CRequestGUI::RebuildURL()
 void CRequestGUI::UpdateTabTitle()
 {
     QString verb = ui->RequestType->currentText();
-    QString requestTitle = verb + " " + ui->RequestURL->text().trimmed();
+    QString requestTitle = verb + ": " + ui->RequestURL->text().trimmed();
     Q_EMIT RequestTitleChanged(requestTitle);
 }
 
 
 void CRequestGUI::UpdateRequestType()
 {
+	auto verb = ui->RequestType->currentText();
+    if (ui->RequestType->findText(verb) == -1) {
+        // If the verb is not found, add it as a custom request type
+        ui->RequestType->setStyleSheet("color: #333; font-style: italic;");
+        return;
+	}
+
 	int index = ui->RequestType->currentIndex();
     auto color = ui->RequestType->itemData(index, Qt::ForegroundRole).toString();
-    ui->RequestType->setStyleSheet("color: " + color + ";");
+    ui->RequestType->setStyleSheet("color: " + color + "; font-style: normal;");
 }
 
 
@@ -907,11 +940,22 @@ void CRequestGUI::LockRequest()
     ui->Run->setEnabled(false);
     ui->RequestURL->setEnabled(false);
     ui->RequestType->setEnabled(false);
+
     ui->RequestBody->setEnabled(false);
+    ui->RequestDataType->setEnabled(false);
+    ui->LoadRequestBody->setEnabled(false);
+    ui->ResetRequestBody->setEnabled(false);
+
     ui->RequestHeaders->setEnabled(false);
     ui->AddHeader->setEnabled(false);
     ui->RemoveHeader->setEnabled(false);
     ui->ClearHeaders->setEnabled(false);
+
+    ui->RequestParams->setEnabled(false);
+    ui->AddParameter->setEnabled(false);
+    ui->RemoveParameter->setEnabled(false);
+    ui->ClearParameters->setEnabled(false);
+
     ui->ReplyDataType->setEnabled(false);
     ui->SaveReplyContent->setEnabled(false);
     ui->CopyReplyContent->setEnabled(false);
@@ -925,11 +969,22 @@ void CRequestGUI::UnlockRequest()
     ui->Run->setEnabled(true);
     ui->RequestURL->setEnabled(true);
     ui->RequestType->setEnabled(true);
+
     ui->RequestBody->setEnabled(true);
+    ui->RequestDataType->setEnabled(true);
+    ui->LoadRequestBody->setEnabled(true);
+    ui->ResetRequestBody->setEnabled(true);
+
     ui->RequestHeaders->setEnabled(true);
     ui->AddHeader->setEnabled(true);
     ui->RemoveHeader->setEnabled(true);
     ui->ClearHeaders->setEnabled(true);
+
+    ui->RequestParams->setEnabled(true);
+    ui->AddParameter->setEnabled(true);
+    ui->RemoveParameter->setEnabled(true);
+    ui->ClearParameters->setEnabled(true);
+
     ui->ReplyDataType->setEnabled(true);
     ui->SaveReplyContent->setEnabled(true);
     ui->CopyReplyContent->setEnabled(true);

@@ -19,8 +19,11 @@ CBookmarkManager::~CBookmarkManager()
 
 bool CBookmarkManager::AddNewBookmark(const CRequestGUI& requestUI, QSettings& settings)
 {
+	// suggest a name for the bookmark
+	QString suggestedName = requestUI.GetVerb() + " " + requestUI.GetPath();
+
 	QString bookmarkName = QInputDialog::getText(nullptr, tr("Add to Bookmarks"),
-		tr("Enter a name for the bookmark:"), QLineEdit::Normal, "");
+		tr("Enter a name for the bookmark:"), QLineEdit::Normal, suggestedName);
 
 	if (bookmarkName.isEmpty())
 		return false;  // user canceled
