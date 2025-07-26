@@ -14,6 +14,13 @@ The sources etc. can be found at: https://github.com/BootsmannApp/bootsmann
 List of changes
 ................................................................................
 
+0.1.1.0 - not released yet
+
+- Fixed #7 (After saving a workspace, title is not updated)
+
+
+................................................................................
+
 0.1.0.0 - Initial demo-release
 
 - Building and executing basic HTTP requests

@@ -203,7 +203,11 @@ void CMainGUI::on_actionNewWorkspace_triggered()
 
 void CMainGUI::on_actionSaveWorkspace_triggered()
 {
-	m_activeWorkspace->SaveWorkspace();
+    if (m_activeWorkspace->SaveWorkspace())
+    {
+        UpdateTitle();
+        UpdateBookmarks();
+    }
 }
 
 
