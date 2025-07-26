@@ -59,6 +59,8 @@ Or, alternativery, there is a page on SourceForge:
 
 [![Download Bootsmann](https://a.fsdn.com/con/app/sf-download-button)](https://sourceforge.net/projects/bootsmann/files/latest/download)
 
+Or on <a href="https://www.softpedia.com/get/Programming/Other-Programming-Files/Bootsmann.shtml#download">Softpedia</a>.
+
 ## Building from sources
 
 Of course, you can get the sources and build them by yourself. 
@@ -98,4 +100,8 @@ jom
 
 ## External Links
 
+Check Bootsmann also at:
+
 <a href="https://sourceforge.net/p/bootsmann/"><img alt="Download Bootsmann" src="https://sourceforge.net/sflogo.php?type=17&amp;group_id=3896710" width=200></a>
+
+<a href="https://www.softpedia.com/get/Programming/Other-Programming-Files/Bootsmann.shtml"><img src="https://www.softpedia.com/_img/softpedia_100_free.webp"></a>
