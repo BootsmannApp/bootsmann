@@ -1176,12 +1176,21 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
     {
         if (!m_hexView) {
             m_hexView = new QHexView(ui->ReplyStack);
+			//m_hexView->setFont(QFont("Courier New", 10));
             ui->ReplyStack->addWidget(m_hexView);
         }
 
         ui->ReplyStack->setCurrentWidget(m_hexView);
 
-        m_hexView->setData(new QHexView::DataStorageArray(m_replyData));
+        //QHexDocument* document = QHexDocument::fromMemory<QMemoryBuffer>(m_replyData);
+		//m_hexView->setDocument(document);
+        
+        //m_hexView->setData(new QHexView::DataStorageArray(m_replyData));
+
+		m_replyBuffer.setData(m_replyData);
+        m_replyBuffer.open(QIODevice::ReadOnly);
+
+        m_hexView->setData(&m_replyBuffer);
     }
         break;
 

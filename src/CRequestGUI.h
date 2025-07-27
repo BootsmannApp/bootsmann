@@ -6,9 +6,13 @@
 #include <QNetworkCacheMetaData>
 #include <QElapsedTimer>
 #include <QSettings>
+#include <QFile>
+#include <QBuffer>
 #include <QWebEngineView>
 
-#include <QHexView.h>
+//#include <QHexView/qhexview.h>
+//#include <QHexView.h>
+#include <QHexView>
 #include <QSourceHighliter.h>
 
 
@@ -128,6 +132,7 @@ private:
 	QElapsedTimer m_timer;
 
 	QByteArray m_replyData;
+	QBuffer m_replyBuffer;
     QHexView *m_hexView = nullptr;
 	QWebEngineView* m_webView = nullptr;
 

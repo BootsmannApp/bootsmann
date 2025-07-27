@@ -14,9 +14,14 @@ FORMS += $$files(*.ui)
 RESOURCES += $$files(*.qrc)
 
 # QHexView
-HEADERS += $$PWD/QHexView/include/QHexView.h
-SOURCES += $$PWD/QHexView/src/QHexView.cpp
-INCLUDEPATH += $$PWD/QHexView/include
+#HEADERS += $$PWD/QHexView/include/QHexView.h
+#SOURCES += $$PWD/QHexView/src/QHexView.cpp
+#INCLUDEPATH += $$PWD/QHexView/include
+
+# QHexView2
+INCLUDEPATH += $$PWD/QHexView2
+HEADERS += $$PWD/QHexView2/qhexview.h
+SOURCES += $$PWD/QHexView2/qhexview.cpp
 
 # QSourceHighlite
 include($$PWD/QSourceHighlite/QSourceHighlite.pri)
@@ -34,5 +39,7 @@ win32{
 	QMAKE_TARGET_DESCRIPTION = Bootsmann REST API Testing Software
 	QMAKE_TARGET_PRODUCT = Bootsmann
 	LIBS += -ladvapi32
+
+        win32-msvc: QMAKE_CXXFLAGS += /MP
 }
 
