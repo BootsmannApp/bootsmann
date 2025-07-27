@@ -50,6 +50,7 @@ private Q_SLOTS:
 	void OnQuitApplication();
 
 private:
+	void SetDefaultStyle();
 	void CreateDefaultWorkspace();
 	void UpdateTitle();
 	void UpdateBookmarks();

@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Bootsmann"
-#define MyAppVersion "0.1.0 (64 bit)"
+#define MyAppVersion "0.1.1 (64 bit)"
 #define MyAppPublisher "BootsmannApp"
 #define MyAppURL "https://github.com/BootsmannApp/bootsmann"
 #define MyAppExeName "bootsmann.exe"
@@ -28,12 +28,12 @@ SolidCompression=yes
 
 ArchitecturesInstallIn64BitMode=x64
 OutputDir=_output
-OutputBaseFilename=bootsmann-0.1-setup-64bit
+OutputBaseFilename=bootsmann-0.1.1-setup-64bit
 DefaultDirName={pf}\Bootsmann
 
 VersionInfoDescription=Bootsmann Installer
 VersionInfoCopyright=© 2025 BootsmannApp
-VersionInfoVersion=0.1.0.0
+VersionInfoVersion=0.1.1.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -54,8 +54,6 @@ Source: "_output\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubdi
 Source: "..\..\LICENSE"; DestDir: "{app}"
 Source: "..\..\CHANGES"; DestDir: "{app}"
 Source: "..\..\README.md"; DestDir: "{app}"
-;Source: "..\..\examples\*"; DestDir: "{app}\examples"; Flags: ignoreversion recursesubdirs createallsubdirs
-;Source: "..\3rdParty\tools\*"; DestDir: "{app}\tools"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 Source: ".\msvc\*"; DestDir: {tmp};
 

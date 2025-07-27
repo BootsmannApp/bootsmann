@@ -369,7 +369,7 @@ void CWorkspaceGUI::UpdateBookmarksMenu(QMenu* menu)
         for (const auto& bookmark : bookmarks) {
 			QMenu* bookMenu = menu->addMenu(bookmark);
 
-            QAction* action = bookMenu->addAction(tr("Use"));
+            QAction* action = bookMenu->addAction(QIcon(":/Icons/Load"), tr("Use"));
             connect(action, &QAction::triggered, this, [this, bookmark]() {
                 LoadBookmark(bookmark);
             });

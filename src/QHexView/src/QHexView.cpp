@@ -41,7 +41,6 @@ m_pdata(NULL)
 	setFocusPolicy(Qt::StrongFocus);
 }
 
-
 QHexView::~QHexView()
 {
 	if(m_pdata)
@@ -59,7 +58,6 @@ void QHexView::setData(QHexView::DataStorage *pData)
 	m_cursorPos = 0;
 	resetSelection(0);
 }
-
 
 void QHexView::showFromOffset(std::size_t offset)
 {
@@ -90,7 +88,6 @@ void QHexView::clear()
 	verticalScrollBar()->setValue(0);
 	viewport()->update();
 }
-
 
 QSize QHexView::fullSize() const
 {
@@ -129,6 +126,7 @@ void QHexView::updatePositions()
 	verticalScrollBar()->setPageStep(areaSize.height() / m_charHeight);
 	verticalScrollBar()->setRange(0, (widgetSize.height() - areaSize.height()) / m_charHeight + 1);
 }
+
 
 void QHexView::paintEvent(QPaintEvent *event)
 {
@@ -229,7 +227,6 @@ void QHexView::paintEvent(QPaintEvent *event)
 		painter.fillRect(cursorX, cursorY, 2, m_charHeight, this->palette().color(QPalette::WindowText));
 	}
 }
-
 
 void QHexView::keyPressEvent(QKeyEvent *event)
 {
@@ -484,6 +481,40 @@ std::size_t QHexView::cursorPos(const QPoint &position)
 	return pos;
 }
 
+void QHexView::setCursorPos(std::size_t position)
+{
+	if (position == std::numeric_limits<std::size_t>::max())
+		position = 0;
+
+	std::size_t maxPos = 0;
+	if (m_pdata)
+	{
+		maxPos = m_pdata->size() * 2;
+		if (m_pdata->size() % m_bytesPerLine)
+			maxPos++;
+	}
+
+	if (position > maxPos)
+		position = maxPos;
+
+	m_cursorPos = position;
+}
+
+void QHexView::ensureVisible()
+{
+	QSize areaSize = viewport()->size();
+
+	int firstLineIdx = verticalScrollBar()->value();
+	int lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
+
+	int cursorY = m_cursorPos / (2 * m_bytesPerLine);
+
+	if (cursorY < firstLineIdx)
+		verticalScrollBar()->setValue(cursorY);
+	else if (cursorY >= lastLineIdx)
+		verticalScrollBar()->setValue(cursorY - areaSize.height() / m_charHeight + 1);
+}
+
 
 void QHexView::resetSelection()
 {
@@ -525,41 +556,6 @@ void QHexView::setSelected(std::size_t offset, std::size_t length)
 	viewport() -> update();
 }
 
-void QHexView::setCursorPos(std::size_t position)
-{
-	if(position == std::numeric_limits<std::size_t>::max())
-		position = 0;
-
-	std::size_t maxPos = 0;
-	if(m_pdata)
-	{
-		maxPos = m_pdata->size() * 2;
-		if(m_pdata->size() % m_bytesPerLine)
-			maxPos++;
-	}
-
-	if(position > maxPos)
-		position = maxPos;
-
-	m_cursorPos = position;
-}
-
-void QHexView::ensureVisible()
-{
-	QSize areaSize = viewport()->size();
-
-	int firstLineIdx = verticalScrollBar() -> value();
-	int lastLineIdx = firstLineIdx + areaSize.height() / m_charHeight;
-
-	int cursorY = m_cursorPos / (2 * m_bytesPerLine);
-
-	if(cursorY < firstLineIdx)
-		verticalScrollBar() -> setValue(cursorY);
-	else if(cursorY >= lastLineIdx)
-		verticalScrollBar() -> setValue(cursorY - areaSize.height() / m_charHeight + 1);
-}
-
-
 
 QHexView::DataStorageArray::DataStorageArray(const QByteArray &arr)
 {
@@ -570,7 +566,6 @@ QByteArray QHexView::DataStorageArray::getData(std::size_t position, std::size_t
 {
 	return m_data.mid(position, length);
 }
-
 
 std::size_t QHexView::DataStorageArray::size()
 {
@@ -590,7 +585,6 @@ QByteArray QHexView::DataStorageFile::getData(std::size_t position, std::size_t 
 	m_file.seek(position);
 	return m_file.read(length);
 }
-
 
 std::size_t QHexView::DataStorageFile::size()
 {

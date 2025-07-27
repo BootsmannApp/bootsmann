@@ -28,7 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 win32{
-	VERSION = 0.1.0.0
+	VERSION = 0.1.1.0
 	RC_ICONS = $$PWD/../win32/icon.ico
 	QMAKE_TARGET_COPYRIGHT = (C) 2025 BootsmannApp
 	QMAKE_TARGET_DESCRIPTION = Bootsmann REST API Testing Software
