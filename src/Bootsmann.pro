@@ -27,6 +27,12 @@ SOURCES += $$PWD/QHexView2/qhexview.cpp
 include($$PWD/QSourceHighlite/QSourceHighlite.pri)
 INCLUDEPATH += $$PWD/QSourceHighlite
 
+# QCodeEditor
+INCLUDEPATH += $$PWD/QCodeEditor/include
+HEADERS += $$files($$PWD/QCodeEditor/include/internal/*.hpp)
+SOURCES += $$files($$PWD/QCodeEditor/src/internal/*.cpp)
+RESOURCES += $$files($$PWD/QCodeEditor/resources/*.qrc)
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

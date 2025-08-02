@@ -116,7 +116,7 @@ private:
         DT_HEX
     };
     bool ShowReplyContent(ReplyDisplayType showType, const QByteArray& data, const QString& contentType = "");
-    void ShowPlainText(const QString& text, bool append);
+    void ShowPlainText(const QString& text, bool asCode);
     void UpdateHtmlReply();
 
 	static bool WriteAsText(const QString& fileName, const QString& content);

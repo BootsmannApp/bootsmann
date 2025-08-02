@@ -40,7 +40,11 @@ List of changes
 0.1.1.0 - not released yet
 
 - Fixed #7 - After saving a workspace, title is not updated
+- Fixed #8 - Response Text is now selectable via keaboard 
+- Fixed #9 - Copying of binary response to the clipboard
 - Added #10 - Custom requests implemented
+- QHexView changed to https://github.com/eteran/qhexview
+- Code editor changed to https://github.com/cpeditor/QCodeEditor (more features)
 
 
 ................................................................................

@@ -1048,16 +1048,18 @@ void CRequestGUI::DecodeReply(QNetworkReply* reply, const QByteArray& data)
 }
 
 
-void CRequestGUI::ShowPlainText(const QString& text, bool append)
+void CRequestGUI::ShowPlainText(const QString& text, bool asCode)
 {
 	ui->ReplyDataInfo->clear();
 
-    if (append)
-        ui->ResponseText->appendPlainText(text);
-    else
+    if (asCode) {
+        ui->ReplyStack->setCurrentIndex(2);
         ui->ResponseText->setPlainText(text);
-    
-    ui->ReplyStack->setCurrentIndex(2);
+    }
+    else {
+        ui->ReplyStack->setCurrentIndex(1);
+		ui->ResponceLabel->setText(text);
+    }   
 }
 
 
@@ -1200,7 +1202,7 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
 
         {
             QString htmlContent = QString::fromUtf8(data);
-            ShowPlainText(htmlContent, false);
+            ShowPlainText(htmlContent, true);
 
 			//m_webView->setUrl(QUrl("data:text/html;charset=utf-8," + QUrl::toPercentEncoding(htmlContent)));
 
@@ -1227,12 +1229,12 @@ bool CRequestGUI::ShowReplyContent(ReplyDisplayType showType, const QByteArray& 
     case DT_JSON:
         m_replyHL->setDocument(ui->ResponseText->document());
         m_replyHL->setCurrentLanguage(QSourceHighlite::QSourceHighliter::CodeJSON);
-        ShowPlainText(QString::fromUtf8(data), false);
+        ShowPlainText(QString::fromUtf8(data), true);
         break;
 
     default:    // plain text
         m_replyHL->setDocument(nullptr);
-        ShowPlainText(QString::fromUtf8(data), false);
+        ShowPlainText(QString::fromUtf8(data), true);
         break;
     }
 

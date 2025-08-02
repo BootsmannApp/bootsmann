@@ -41,8 +41,8 @@ void CMainGUI::SetDefaultStyle()
 {
     setStyleSheet(
         "QWidget {"
-        "font-family: Verdana;"
-        "font-size: 10pt;"
+ //       "font-family: Verdana;"
+ //       "font-size: 10pt;"
         "color: #333;"
         "}\n"
 
@@ -144,9 +144,10 @@ void CMainGUI::on_actionAbout_triggered()
 			"<p><a href='https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=Z35EHHJ3729GG&source=url'>PayPal</a></p>"
             "<hr>"
             "<p>The application has been built using:</p>"
-			"Qt framework &copy; <i>Qt Company</i> (<a href='https://qt.io'>https://qt.io</a>)<br>"
-			"QHexView &copy; <i>Antonio Davide</i> (<a href='https://github.com/Dax89/QHexView'>https://github.com/Dax89/QHexView</a>)<br>"
-			"QSourceHighliter &copy; <i>Waqar Ahmed</i> (<a href='https://github.com/Waqar144/QSourceHighlite'>https://github.com/Waqar144/QSourceHighlite</a>)<br>"
+			"Qt framework &copy; <i>Qt Company</i> (<a href='https://qt.io'>https://qt.io</a>) - QPL Licence<br>"
+			//"QHexView &copy; <i>Antonio Davide</i> (<a href='https://github.com/Dax89/QHexView'>https://github.com/Dax89/QHexView</a>)<br>"
+			"QHexView &copy; <i>Evan Teran</i> (<a href='https://github.com/eteran/qhexview'>https://github.com/eteran/qhexview</a>) - BSD Licence<br>"
+			"QSourceHighliter &copy; <i>Waqar Ahmed</i> (<a href='https://github.com/Waqar144/QSourceHighlite'>https://github.com/Waqar144/QSourceHighlite</a>) - MIT Licence<br>"
         )
         .arg(qApp->applicationDisplayName())
 		.arg("MIT")
