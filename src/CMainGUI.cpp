@@ -148,6 +148,7 @@ void CMainGUI::on_actionAbout_triggered()
 			//"QHexView &copy; <i>Antonio Davide</i> (<a href='https://github.com/Dax89/QHexView'>https://github.com/Dax89/QHexView</a>)<br>"
 			"QHexView &copy; <i>Evan Teran</i> (<a href='https://github.com/eteran/qhexview'>https://github.com/eteran/qhexview</a>) - BSD Licence<br>"
 			"QSourceHighliter &copy; <i>Waqar Ahmed</i> (<a href='https://github.com/Waqar144/QSourceHighlite'>https://github.com/Waqar144/QSourceHighlite</a>) - MIT Licence<br>"
+			"QCodeEditor &copy; <i>CP Editor</i> (<a href='https://github.com/cpeditor/QCodeEditor'>https://github.com/cpeditor/QCodeEditor</a>) - MIT Licence<br>"
         )
         .arg(qApp->applicationDisplayName())
 		.arg("MIT")

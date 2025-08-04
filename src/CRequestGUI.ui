@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1053</width>
+    <width>1128</width>
     <height>564</height>
    </rect>
   </property>
@@ -473,7 +473,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <string>Copy content to clipboard</string>
                </property>
                <property name="text">
-                <string>Copy</string>
+                <string>Copy All</string>
                </property>
                <property name="icon">
                 <iconset resource="Bootsmann.qrc">
@@ -727,7 +727,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
        <item>
         <widget class="QTabWidget" name="ResultTabs">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="ResponceTab">
           <attribute name="title">
@@ -863,7 +863,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <string>Copy content to clipboard</string>
                  </property>
                  <property name="text">
-                  <string>Copy</string>
+                  <string>Copy All</string>
                  </property>
                  <property name="icon">
                   <iconset resource="Bootsmann.qrc">
@@ -1067,7 +1067,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <string>Copy content to clipboard</string>
                </property>
                <property name="text">
-                <string>Copy</string>
+                <string>Copy All</string>
                </property>
                <property name="icon">
                 <iconset resource="Bootsmann.qrc">
@@ -1115,10 +1115,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="ReportTab">
+         <widget class="CReportGUI" name="ReportTab">
           <attribute name="title">
            <string>Report</string>
           </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_14"/>
          </widget>
         </widget>
        </item>
@@ -1161,6 +1162,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <class>QCodeEditor</class>
    <extends>QTextEdit</extends>
    <header location="global">QCodeEditor</header>
+  </customwidget>
+  <customwidget>
+   <class>CReportGUI</class>
+   <extends>QWidget</extends>
+   <header location="global">CReportGUI.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

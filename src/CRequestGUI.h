@@ -1,7 +1,7 @@
 #ifndef CREQUESTGUI_H
 #define CREQUESTGUI_H
 
-#include <QWidget>
+#include <QTableWidget>
 #include <QNetworkReply>
 #include <QNetworkCacheMetaData>
 #include <QElapsedTimer>
@@ -16,13 +16,20 @@
 #include <QSourceHighliter.h>
 
 
-namespace Ui {
-class CRequestGUI;
-}
+struct ReplyInfo
+{
+    QString statusText;
+	int statusCode = -1;
+	int elapsedTime = 0; // in milliseconds
+	int replySize = 0; // in bytes
+	QDateTime requestStarted;
+};
 
 class CRequestManager;
 
-class QTableWidget;
+namespace Ui {
+    class CRequestGUI;
+}
 
 class CRequestGUI : public QWidget
 {
@@ -35,17 +42,24 @@ public:
     void Init();
     bool IsDefault() const;
 
+    // request
     QString GetVerb() const;
     QString GetPath() const;
     QString GetRequestURL(bool stripped = false) const;
 	bool RebaseURL(const QString& newUrl);
 
-	QString StoreToString() const;
-	bool RestoreFromString(const QString& data);
+    // reports
+	QPair<int, QString> GetRequestBody() const; // size, content
+    QNetworkCacheMetaData::RawHeaderList GetRequestHeaders() const;
+	QList<QPair<QString, QString>> GetAuthorization() const;
+	const ReplyInfo& GetReplyInfo() const;
 
     // IO
 	bool Store(QSettings& settings) const;
     bool Restore(QSettings& settings);
+
+    QString StoreToString() const;
+    bool RestoreFromString(const QString& data);
 
 Q_SIGNALS:
     void RequestTitleChanged(const QString& title);
@@ -96,7 +110,6 @@ private:
 	void SetRequestHeader(QNetworkRequest::KnownHeaders type, const QString& value);
 	void RemoveRequestHeader(const QString& name);
 	void RemoveRequestHeader(QNetworkRequest::KnownHeaders type);
-    QNetworkCacheMetaData::RawHeaderList GetRequestHeaders() const;
 
     void LockRequest();
 	void UnlockRequest();
@@ -131,6 +144,7 @@ private:
     CRequestManager& m_reqMgr;
 	QElapsedTimer m_timer;
 
+	ReplyInfo m_replyInfo;
 	QByteArray m_replyData;
 	QBuffer m_replyBuffer;
     QHexView *m_hexView = nullptr;

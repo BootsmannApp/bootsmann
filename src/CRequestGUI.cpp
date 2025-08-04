@@ -83,6 +83,9 @@ CRequestGUI::CRequestGUI(CRequestManager& reqMgr, QWidget *parent)
  //   ui->RequestType->setItemData(11, QColor("#333"), Qt::ForegroundRole);     // Custom
 
     UpdateRequestType();
+
+	// report connections
+	ui->ReportTab->SetRequestProvider(this);
 }
 
 
@@ -283,6 +286,21 @@ bool CRequestGUI::RebaseURL(const QString& newUrl)
     RebuildURL();
 
     return true;
+}
+
+
+QPair<int, QString> CRequestGUI::GetRequestBody() const
+{
+    if (ui->RequestDataType->currentIndex() == 3) {
+        // If the request data type is binary, return the file name to upload
+		QFile file(m_fileNameToUpload);
+        if (!file.exists()) {
+            return { 0, m_fileNameToUpload }; // Return empty if file does not exist
+		}
+		return { file.size(), m_fileNameToUpload };
+	}
+
+    return { ui->RequestBody->toPlainText().size(), ui->RequestBody->toPlainText() };
 }
 
 
@@ -606,7 +624,7 @@ void CRequestGUI::on_LoadRequestBody_clicked()
     if (filePath.isEmpty())
         return;
 
-    ui->RequestBinaryLabel->setText(tr("Binary data will be uploaded from:/n/n %1").arg(filePath));
+    ui->RequestBinaryLabel->setText(tr("Binary data will be uploaded from:\n\n%1").arg(filePath));
 	m_fileNameToUpload = filePath;
 
     if (ui->RequestDataType->currentIndex() >= DT_IMAGE) {
@@ -614,7 +632,7 @@ void CRequestGUI::on_LoadRequestBody_clicked()
     else {
 		QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, tr("Error"), tr("Could not open file: %1").arg(file.errorString()));
+            QMessageBox::warning(this, tr("Error"), tr("Could not open file:\n\n%1").arg(file.errorString()));
             return;
 		}
 		auto content = file.readAll(); // Read the file content
@@ -684,6 +702,35 @@ QNetworkCacheMetaData::RawHeaderList CRequestGUI::GetRequestHeaders() const
 	}
 
     return headers;
+}
+
+
+QList<QPair<QString, QString>> CRequestGUI::GetAuthorization() const
+{
+    if (ui->AuthType->currentIndex() == 1) { // Unencrypted authentication
+        QString login = ui->AuthUser->text().trimmed();
+        QString password = ui->AuthPassword->text().trimmed();
+        return { { "Unencrypted", ""}, { "login", login }, {"password", password} };
+    }
+
+    if (ui->AuthType->currentIndex() == 2) { // Bearer token authentication
+        QString token = ui->AuthToken->text().trimmed();
+        return { { "Bearer Token", ""}, { "token", token } };
+	}
+
+    if (ui->AuthType->currentIndex() == 3) { // Basic authentication
+        QString login = ui->AuthUser->text().trimmed();
+        QString password = ui->AuthPassword->text().trimmed();
+        return { { "Basic", ""}, { "login", login }, {"password", password} };
+	}
+
+    return {}; // No authentication
+}
+
+
+const ReplyInfo& CRequestGUI::GetReplyInfo() const
+{
+    return m_replyInfo;
 }
 
 
@@ -798,18 +845,23 @@ void CRequestGUI::on_Run_clicked()
 {
     ClearResult();
 
+    m_replyInfo = ReplyInfo(); // Reset reply info
+    m_replyInfo.requestStarted = QDateTime::currentDateTime();
+
     QUrl request = QUrl::fromUserInput(ui->RequestURL->text().trimmed());
     QString verb = ui->RequestType->currentText();
 
     if (request.isEmpty()){
         ui->ResultCode->setText(tr("ERROR"));
-        ShowPlainText(tr("Request is empty"), false);
+        ShowPlainText(m_replyInfo.statusText = tr("Request is empty"), false);
+        Q_EMIT RequestFailed(); 
         return;
     }
 
     if (!request.isValid()) {
         ui->ResultCode->setText(tr("ERROR"));
-        ShowPlainText(tr("Request is invalid"), false);
+        ShowPlainText(m_replyInfo.statusText = tr("Request is invalid"), false);
+        Q_EMIT RequestFailed(); 
         return;
     }
 
@@ -818,13 +870,13 @@ void CRequestGUI::on_Run_clicked()
     if (ui->RequestDataType->currentIndex() >= DT_IMAGE) {
         // If the request is an image or binary data, we need to upload a file
         if (m_fileNameToUpload.isEmpty()) {
-            QMessageBox::warning(this, tr("No File Selected"), tr("Please select a file to upload."));
+            QMessageBox::warning(this, m_replyInfo.statusText = tr("No File Selected"), tr("Please select a file to upload."));
             return;
         }
 
         m_fileToUpload.setFileName(m_fileNameToUpload);
         if (!m_fileToUpload.open(QIODevice::ReadOnly)) {
-            QMessageBox::warning(this, tr("Error"), tr("Could not open file: %1").arg(m_fileToUpload.errorString()));
+            QMessageBox::warning(this, tr("Error"), m_replyInfo.statusText = tr("Could not open file: %1").arg(m_fileToUpload.errorString()));
             return;
         }
 
@@ -843,7 +895,8 @@ void CRequestGUI::on_Run_clicked()
     if (reply == nullptr) {
         UnlockRequest();
         ui->ResultCode->setText(tr("ERROR"));
-        ShowPlainText(tr("Request could not be processed"), false);
+        ShowPlainText(m_replyInfo.statusText = tr("Request could not be processed"), false);
+        Q_EMIT RequestFailed();
         return;
     }
 
@@ -855,12 +908,13 @@ void CRequestGUI::on_Run_clicked()
 
 void CRequestGUI::OnRequestDone()
 {
-    auto ms = m_timer.elapsed();
-    auto reply = qobject_cast<QNetworkReply*>(sender());
-
     // update response time and size
-    ui->ResponseSizeLabel->setText(tr("%1 bytes").arg(reply->bytesAvailable()));
-    ui->TimeLabel->setText(tr("%1 ms").arg(ms));
+    auto reply = qobject_cast<QNetworkReply*>(sender());
+    m_replyInfo.elapsedTime = m_timer.elapsed();
+    m_replyInfo.replySize = reply->bytesAvailable();
+
+    ui->ResponseSizeLabel->setText(tr("%1 bytes").arg(m_replyInfo.replySize));
+    ui->TimeLabel->setText(tr("%1 ms").arg(m_replyInfo.elapsedTime));
 
     reply->deleteLater(); // delete reply object after processing
 
@@ -897,6 +951,9 @@ void CRequestGUI::OnRequestDone()
     auto statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     auto statusReason = reply->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toString();
 
+    m_replyInfo.statusCode = errorCode ? errorCode : statusCode;
+    m_replyInfo.statusText = errorCode ? errorString : statusReason;
+
     // if error happened, this will be handled in another slot
     QString statusText;
     if (reply->error() == QNetworkReply::NoError)
@@ -928,10 +985,13 @@ void CRequestGUI::OnRequestDone()
 
 void CRequestGUI::OnRequestError(QNetworkReply::NetworkError code)
 {
-    auto reply = qobject_cast<QNetworkReply*>(sender());
-    auto errorText = reply->errorString();
+ //   auto reply = qobject_cast<QNetworkReply*>(sender());
+ //   auto errorText = reply->errorString();
 
-    Q_EMIT RequestFailed();
+ //   m_replyInfo.statusCode = code;
+	//m_replyInfo.statusText = errorText;
+
+ //   Q_EMIT RequestFailed();
 }
 
 
@@ -1012,6 +1072,8 @@ void CRequestGUI::ClearResult()
 	ui->SaveHeadersContent->setEnabled(false);
 	ui->CopyHeadersContent->setEnabled(false);
     ui->HtmlType->hide();
+
+    m_replyInfo = ReplyInfo(); // Reset reply info
 
     Q_EMIT RequestCleared();
 }
